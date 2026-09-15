@@ -74,7 +74,7 @@ const UNIDAD_INFER = {
 // Known branches per business unit, kept even when a branch has zero requests
 // so far (e.g. Valle Real) — add new ones here as the org grows.
 const SUCURSALES_CONOCIDAS = {
-  'EasyFit': ['Cañadas'],
+  'EasyFit': ['Aleira', 'ITESO', 'Cañadas', 'Ávila Camacho'],
   'GEB': ['Universidad'],
   'Vivo 47': ['Naciones Unidas', 'Gourmetería', 'Valle Real'],
 };
