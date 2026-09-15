@@ -92,7 +92,6 @@
   }
   .badge[hidden]{ display:none; }
   .badge .dot{ width:6px; height:6px; border-radius:50%; background:currentColor; flex:none; }
-  .meta-line{ color:var(--ink-2); font-size:13px; margin-top:8px; }
 
   /* ---------- filter bar ---------- */
   .filters{
@@ -126,12 +125,6 @@
     padding:8px 12px; cursor:pointer; align-self:flex-end;
   }
   button.reset:hover{ color:var(--ink); border-color:var(--ink-muted); }
-  .count-pill{
-    margin-left:auto; align-self:flex-end;
-    font-size:13px; color:var(--ink-2);
-    padding:8px 0;
-  }
-  .count-pill b{ color:var(--ink); }
 
   /* ---------- KPI strip ---------- */
   .kpis{
@@ -294,11 +287,10 @@
 
   <header class="top">
     <div class="brand">
-      <img src="assets/geb-logo.png" alt="Logo GEB">
+      <img src="assets/geb-logo.png" alt="Logo Grupo Empresarial Bienestar">
       <div class="title-block">
         <div class="eyebrow">Panel de control · Compras</div>
         <h1>Dashboard Compras</h1>
-        <div class="meta-line">Ciclo de compra: de la requisición a la recepción · meta <span class="mono">10 días</span></div>
       </div>
     </div>
     <span class="badge" id="sync-badge" hidden><span class="dot"></span></span>
@@ -330,7 +322,6 @@
       <input type="search" id="f-search" placeholder="Artículo, folio o solicitante…">
     </div>
     <button class="reset" id="btn-reset">Limpiar filtros</button>
-    <div class="count-pill" id="count-pill"></div>
   </div>
 
   <section class="kpis" id="kpis"></section>
@@ -681,7 +672,6 @@
     renderOrdinalBars('status-chart', STATUS_ORDER, STATUS_COLOR, rows, 'estatus');
     renderOrdinalBars('priority-chart', PRIO_ORDER, PRIO_COLOR, rows, 'prioridad');
     renderTable(rows);
-    document.getElementById('count-pill').innerHTML = `<b>${rows.length}</b> de ${DATA.length} solicitudes`;
   }
 
   ['unidad','sucursal','departamento','prioridad','estatus'].forEach(k=>{
