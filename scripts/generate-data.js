@@ -107,6 +107,8 @@ async function main() {
     let estatus = r['Estatus'] || '';
     let estatusSinDefinir = false;
     if (!estatus) { estatus = 'Pendiente'; estatusSinDefinir = true; }
+    // A recorded receipt date closes the cycle, regardless of the Estatus cell.
+    if (r['Fecha de recepción real']) { estatus = 'Entregado'; estatusSinDefinir = false; }
 
     const cantidadNum = parseInt(r['Cantidad'], 10);
 
@@ -126,10 +128,9 @@ async function main() {
       estatus,
       estatusSinDefinir,
       fechaEstimada: parseDT(r['Fecha estimada de entrega']),
-      // Not in the sheet yet — add a "Fecha de recepción real" and a "Notas de
-      // seguimiento" column to the form/sheet and map them here once they exist.
-      fechaRecibido: null,
-      notas: '',
+      // Populated once the sheet has these two columns (compras team fills them in directly).
+      fechaRecibido: parseDT(r['Fecha de recepción real']),
+      notas: r['Notas de seguimiento'] || '',
     };
   });
 

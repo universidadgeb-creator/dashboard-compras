@@ -9,86 +9,34 @@
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Public+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
+    /* Institutional light theme — deliberately single-theme (no dark mode). */
     color-scheme: light;
-    --page:            #f9f9f7;
-    --surface:         #fcfcfb;
+    --page:            #eef1f6;
+    --surface:         #ffffff;
     --surface-raised:  #ffffff;
-    --ink:             #0b0b0b;
-    --ink-2:           #52514e;
-    --ink-muted:       #898781;
-    --grid:            #e1e0d9;
-    --axis:            #c3c2b7;
-    --border:          rgba(11,11,11,0.10);
-    --accent:          #2a78d6;
+    --ink:             #16213b;
+    --ink-2:           #4a5468;
+    --ink-muted:       #8791a3;
+    --grid:            #e3e7ef;
+    --axis:            #c6cdda;
+    --border:          rgba(22,33,59,0.12);
+    --accent:          #1f4e8c;
     --accent-ink:      #ffffff;
 
-    --pipe-1: #86b6ef;
-    --pipe-2: #3987e5;
-    --pipe-3: #1c5cab;
-    --pipe-4: #0d366b;
+    --pipe-1: #7fa6d8;
+    --pipe-2: #3d76bd;
+    --pipe-3: #163f73;
 
-    --prio-normal:  #f0a874;
-    --prio-media:   #eb6834;
-    --prio-urgente: #a83c1f;
+    --prio-normal:  #ecb489;
+    --prio-media:   #e07a3a;
+    --prio-urgente: #a53c1d;
 
-    --good:     #0ca30c;
-    --good-bg:  rgba(12,163,12,0.12);
-    --warn:     #b5790a;
-    --warn-bg:  rgba(250,178,25,0.20);
-    --crit:     #d03b3b;
-    --crit-bg:  rgba(208,59,59,0.12);
-  }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      color-scheme: dark;
-      --page:            #0d0d0d;
-      --surface:         #1a1a19;
-      --surface-raised:  #212120;
-      --ink:             #ffffff;
-      --ink-2:           #c3c2b7;
-      --ink-muted:       #898781;
-      --grid:            #2c2c2a;
-      --axis:            #383835;
-      --border:          rgba(255,255,255,0.10);
-      --accent:          #3987e5;
-      --accent-ink:      #ffffff;
-
-      --prio-normal:  #b96a3a;
-      --prio-media:   #d95926;
-      --prio-urgente: #ff8f5c;
-
-      --good:     #0ca30c;
-      --good-bg:  rgba(12,163,12,0.22);
-      --warn:     #fab219;
-      --warn-bg:  rgba(250,178,25,0.20);
-      --crit:     #e66767;
-      --crit-bg:  rgba(230,103,103,0.20);
-    }
-  }
-  :root[data-theme="dark"]{
-    color-scheme: dark;
-    --page:            #0d0d0d;
-    --surface:         #1a1a19;
-    --surface-raised:  #212120;
-    --ink:             #ffffff;
-    --ink-2:           #c3c2b7;
-    --ink-muted:       #898781;
-    --grid:            #2c2c2a;
-    --axis:            #383835;
-    --border:          rgba(255,255,255,0.10);
-    --accent:          #3987e5;
-    --accent-ink:      #ffffff;
-
-    --prio-normal:  #b96a3a;
-    --prio-media:   #d95926;
-    --prio-urgente: #ff8f5c;
-
-    --good:     #0ca30c;
-    --good-bg:  rgba(12,163,12,0.22);
-    --warn:     #fab219;
-    --warn-bg:  rgba(250,178,25,0.20);
-    --crit:     #e66767;
-    --crit-bg:  rgba(230,103,103,0.20);
+    --good:     #157a15;
+    --good-bg:  rgba(21,122,21,0.10);
+    --warn:     #a5690a;
+    --warn-bg:  rgba(230,158,20,0.16);
+    --crit:     #b23131;
+    --crit-bg:  rgba(178,49,49,0.10);
   }
 
   *{ box-sizing:border-box; }
@@ -117,15 +65,17 @@
 
   /* ---------- header ---------- */
   header.top{
-    display:flex; align-items:flex-end; justify-content:space-between; gap:16px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
     flex-wrap:wrap;
     padding-bottom:20px; margin-bottom:20px;
     border-bottom:1px solid var(--border);
   }
+  header.top .brand{ display:flex; align-items:center; gap:16px; }
+  header.top .brand img{ height:60px; width:auto; flex:none; }
   header.top .title-block h1{
     font-family:"Big Shoulders Display", system-ui, sans-serif;
     font-weight:800;
-    font-size:clamp(28px, 4vw, 40px);
+    font-size:clamp(26px, 4vw, 38px);
     letter-spacing:0.01em;
     line-height:1;
     margin-top:6px;
@@ -135,12 +85,13 @@
     font-family:"IBM Plex Mono", monospace;
     font-size:11px; font-weight:500;
     padding:5px 10px; border-radius:100px;
-    border:1px solid var(--warn);
-    color:var(--warn);
-    background:var(--warn-bg);
+    border:1px solid var(--crit);
+    color:var(--crit);
+    background:var(--crit-bg);
     white-space:nowrap;
   }
-  .badge .dot{ width:6px; height:6px; border-radius:50%; background:var(--warn); flex:none; }
+  .badge[hidden]{ display:none; }
+  .badge .dot{ width:6px; height:6px; border-radius:50%; background:currentColor; flex:none; }
   .meta-line{ color:var(--ink-2); font-size:13px; margin-top:8px; }
 
   /* ---------- filter bar ---------- */
@@ -278,6 +229,21 @@
   .prio{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; }
   .prio i{ width:8px; height:8px; border-radius:2px; flex:none; }
 
+  .who{ display:flex; align-items:center; gap:6px; }
+  .mail-btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:22px; height:22px; border-radius:6px; flex:none;
+    color:var(--accent); background:rgba(31,78,140,0.08);
+    border:1px solid transparent; text-decoration:none;
+  }
+  .mail-btn:hover{ background:rgba(31,78,140,0.16); border-color:var(--border); }
+  .mail-btn svg{ width:13px; height:13px; }
+
+  .comment-cell{
+    max-width:220px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    color:var(--ink-2); font-size:12.5px;
+  }
+
   /* ---------- table ---------- */
   .table-wrap{ overflow-x:auto; border:1px solid var(--border); border-radius:12px; background:var(--surface); }
   table{ width:100%; border-collapse:collapse; min-width:1400px; }
@@ -327,14 +293,15 @@
 <div class="wrap">
 
   <header class="top">
-    <div class="title-block">
-      <div class="eyebrow">Panel de control · Compras</div>
-      <h1>Dashboard Compras</h1>
-      <div class="meta-line">Ciclo de compra: de la requisición a la recepción · meta <span class="mono">10 días</span></div>
+    <div class="brand">
+      <img src="assets/geb-logo.png" alt="Logo GEB">
+      <div class="title-block">
+        <div class="eyebrow">Panel de control · Compras</div>
+        <h1>Dashboard Compras</h1>
+        <div class="meta-line">Ciclo de compra: de la requisición a la recepción · meta <span class="mono">10 días</span></div>
+      </div>
     </div>
-    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
-      <span class="badge" id="sync-badge"><span class="dot"></span>Cargando datos…</span>
-    </div>
+    <span class="badge" id="sync-badge" hidden><span class="dot"></span></span>
   </header>
 
   <div class="filters" id="filters">
@@ -372,7 +339,7 @@
     <div class="panel-head">
       <div>
         <h2>Cumplimiento por dimensión</h2>
-        <div class="panel-sub">Solicitudes abiertas (no entregadas), agrupadas y coloreadas por semáforo de vencimiento.</div>
+        <div class="panel-sub">Solo solicitudes <strong>abiertas</strong> (no entregadas) dentro de tu filtro — no es el total histórico.</div>
       </div>
       <div class="tabs" id="dim-tabs">
         <button data-dim="unidad" class="active">Unidad de negocio</button>
@@ -391,11 +358,11 @@
 
   <div class="row-2" style="margin-top:16px;">
     <section class="panel">
-      <div class="panel-head"><div><h2>Solicitudes por estatus</h2><div class="panel-sub">Todo el histórico visible con los filtros actuales.</div></div></div>
+      <div class="panel-head"><div><h2>Solicitudes por estatus</h2><div class="panel-sub"><strong>Todo</strong> el histórico (abiertas y entregadas) dentro de tu filtro.</div></div></div>
       <div class="bars" id="status-chart"></div>
     </section>
     <section class="panel">
-      <div class="panel-head"><div><h2>Solicitudes por prioridad</h2><div class="panel-sub">Todo el histórico visible con los filtros actuales.</div></div></div>
+      <div class="panel-head"><div><h2>Solicitudes por prioridad</h2><div class="panel-sub"><strong>Todo</strong> el histórico (abiertas y entregadas) dentro de tu filtro.</div></div></div>
       <div class="bars" id="priority-chart"></div>
     </section>
   </div>
@@ -420,6 +387,7 @@
             <th><button data-sort="fechaSolicitud">Solicitud ↕</button></th>
             <th><button data-sort="fechaEstimada">Estimada ↕</button></th>
             <th class="num"><button data-sort="cicloDias">Ciclo (d) ↕</button></th>
+            <th>Comentarios</th>
             <th>Recepción real</th>
             <th>Notas de seguimiento</th>
           </tr>
@@ -433,9 +401,10 @@
     <strong>Sobre estos datos:</strong> vienen de “Control de pedidos 2026 whatsapp” y se vuelven a leer automáticamente
     cada 30 minutos (ver <code>.github/workflows/deploy.yml</code>). Solo las solicitudes más recientes traen
     <em>Unidad de negocio</em> y <em>fecha estimada</em> de origen — el resto se completó infiriendo la unidad a partir de
-    la sucursal original. Las columnas <strong>Recepción real</strong> y <strong>Notas de seguimiento</strong> están listas
-    para mostrarse pero hoy no existen en la hoja — agrégalas al formulario/hoja (una fecha y un texto libre) para que el
-    equipo de compras cierre el ciclo ahí mismo y este dashboard las recoja solo, sin depender de otro sistema.
+    la sucursal original, por lo que puede no ser exacto. Las columnas <strong>Recepción real</strong> y
+    <strong>Notas de seguimiento</strong> se leen directo de la hoja (agrega ahí una columna “Fecha de recepción real” y
+    otra “Notas de seguimiento” para que el equipo de compras cierre el ciclo desde donde ya trabaja). El ícono de correo
+    junto al solicitante abre un mensaje de seguimiento ya redactado, listo para revisar y enviar.
   </footer>
 
 </div>
@@ -451,16 +420,22 @@
   const MS_DAY = 86400000;
   const todayD = new Date(); todayD.setHours(0,0,0,0);
 
-  const STATUS_ORDER = ['Pendiente','En proceso / Cotizando','Comprando / Recibido','Entregado'];
-  const STATUS_COLOR = { 'Pendiente':'var(--pipe-1)', 'En proceso / Cotizando':'var(--pipe-2)', 'Comprando / Recibido':'var(--pipe-3)', 'Entregado':'var(--pipe-4)' };
+  const STATUS_ORDER = ['En proceso','Comprando / Recibido','Entregado'];
+  const STATUS_COLOR = { 'En proceso':'var(--pipe-1)', 'Comprando / Recibido':'var(--pipe-2)', 'Entregado':'var(--pipe-3)' };
   const PRIO_ORDER = ['Normal','Media','Urgente'];
   const PRIO_COLOR = { 'Normal':'var(--prio-normal)', 'Media':'var(--prio-media)', 'Urgente':'var(--prio-urgente)' };
+
+  function normalizeEstatus(raw){
+    if(raw === 'Pendiente' || raw === 'En proceso / Cotizando' || !raw) return 'En proceso';
+    return raw;
+  }
 
   function parseD(s){ if(!s) return null; const [y,m,d]=s.split('-').map(Number); return new Date(y, m-1, d); }
   function diffDays(a,b){ return Math.round((a-b)/MS_DAY); }
   function fmtD(s){ if(!s) return '—'; const d=parseD(s); return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'}); }
 
-  function computeRisk(r){
+  function computeRisk(raw){
+    const r = Object.assign({}, raw, { estatus: normalizeEstatus(raw.estatus) });
     const solD = parseD(r.fechaSolicitud);
     const estD = parseD(r.fechaEstimada);
     const recD = parseD(r.fechaRecibido);
@@ -499,7 +474,7 @@
   /* ================= filter state ================= */
   const state = { unidad:'', sucursal:'', departamento:'', prioridad:'', estatus:'', search:'', dim:'unidad', sortKey:'fechaSolicitud', sortDir:-1 };
 
-  function uniques(key){ return Array.from(new Set(DATA.map(d=>d[key]))).sort((a,b)=>a.localeCompare(b,'es')); }
+  function uniques(key, rows){ return Array.from(new Set((rows||DATA).map(d=>d[key]))).sort((a,b)=>a.localeCompare(b,'es')); }
 
   function fillSelect(id, values, current){
     const el = document.getElementById(id);
@@ -515,9 +490,12 @@
   }
 
   function initFilters(){
+    // Sucursal and Departamento cascade from the selected Unidad de negocio,
+    // so a branch/department never shows up under a unit it doesn't belong to.
+    const rowsForUnidad = state.unidad ? DATA.filter(d=>d.unidad===state.unidad) : DATA;
     fillSelect('f-unidad', uniques('unidad'), state.unidad);
-    fillSelect('f-sucursal', uniques('sucursal'), state.sucursal);
-    fillSelect('f-depto', uniques('departamento'), state.departamento);
+    fillSelect('f-sucursal', uniques('sucursal', rowsForUnidad), state.sucursal);
+    fillSelect('f-depto', uniques('departamento', rowsForUnidad), state.departamento);
     fillSelect('f-prioridad', PRIO_ORDER.filter(p=>uniques('prioridad').includes(p)), state.prioridad);
     fillSelect('f-estatus', STATUS_ORDER.filter(s=>uniques('estatus').includes(s)), state.estatus);
   }
@@ -649,14 +627,14 @@
     });
     const body = document.getElementById('table-body');
     if(!sorted.length){
-      body.innerHTML = `<tr class="empty-row"><td colspan="14">Ninguna solicitud coincide con estos filtros.</td></tr>`;
+      body.innerHTML = `<tr class="empty-row"><td colspan="15">Ninguna solicitud coincide con estos filtros.</td></tr>`;
       return;
     }
     body.innerHTML = sorted.map(d=>`
       <tr>
         <td>${riskChip(d)}</td>
         <td class="folio">${d.folio}</td>
-        <td>${d.solicitante}</td>
+        <td><div class="who">${d.solicitante}${mailBtn(d)}</div></td>
         <td class="item-cell"><div class="art">${d.articulo}</div><div class="qty">Cant. ${d.cantidad}</div></td>
         <td>${d.unidad}</td>
         <td>${d.sucursal}</td>
@@ -666,9 +644,19 @@
         <td class="mono">${fmtD(d.fechaSolicitud)}</td>
         <td class="mono">${fmtD(d.fechaEstimada)}</td>
         <td class="num mono">${d.cicloDias==null?'—':d.cicloDias}</td>
+        <td class="comment-cell" title="${escapeAttr(d.comentarios)}">${d.comentarios ? escapeAttr(d.comentarios) : '—'}</td>
         <td class="mono">${fmtD(d.fechaRecibido)}</td>
         <td>${d.notas ? escapeAttr(d.notas) : '<span style="color:var(--ink-muted)">—</span>'}</td>
       </tr>`).join('');
+  }
+
+  function mailBtn(d){
+    if(!d.correo) return '';
+    const subject = encodeURIComponent(`Seguimiento ${d.folio} — ${d.articulo}`);
+    const body = encodeURIComponent(`Hola ${d.solicitante},\n\nTe escribo para darle seguimiento a tu solicitud ${d.folio} (${d.articulo}).\n\nEstatus actual: ${d.estatus}.\n\nSaludos.`);
+    return `<a class="mail-btn" href="mailto:${escapeAttr(d.correo)}?subject=${subject}&body=${body}" title="Enviar correo de seguimiento a ${escapeAttr(d.correo)}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z" opacity="0"/><path d="M3 6l9 7 9-7"/><path d="M21 6v12H3V6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1Z"/></svg>
+    </a>`;
   }
 
   function escapeAttr(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
@@ -686,7 +674,14 @@
 
   ['unidad','sucursal','departamento','prioridad','estatus'].forEach(k=>{
     document.getElementById('f-'+(k==='departamento'?'depto':k)).addEventListener('change', e=>{
-      state[k] = e.target.value; renderAll();
+      state[k] = e.target.value;
+      if(k==='unidad'){
+        const rowsForUnidad = state.unidad ? DATA.filter(d=>d.unidad===state.unidad) : DATA;
+        if(state.sucursal && !uniques('sucursal', rowsForUnidad).includes(state.sucursal)) state.sucursal = '';
+        if(state.departamento && !uniques('departamento', rowsForUnidad).includes(state.departamento)) state.departamento = '';
+        initFilters();
+      }
+      renderAll();
     });
   });
   document.getElementById('f-search').addEventListener('input', e=>{ state.search = e.target.value; renderAll(); });
@@ -714,11 +709,9 @@
 
   /* ================= load data.json (regenerated on a schedule from the sheet) ================= */
   const badge = document.getElementById('sync-badge');
-  function setBadge(html, tone){
-    badge.innerHTML = html;
-    const colorVar = tone==='good' ? 'var(--good)' : tone==='crit' ? 'var(--crit)' : 'var(--warn)';
-    const bgVar = tone==='good' ? 'var(--good-bg)' : tone==='crit' ? 'var(--crit-bg)' : 'var(--warn-bg)';
-    badge.style.borderColor = colorVar; badge.style.color = colorVar; badge.style.background = bgVar;
+  function setBadge(text){
+    badge.innerHTML = `<span class="dot"></span>${text}`;
+    badge.hidden = false;
   }
 
   (async function loadData(){
@@ -728,11 +721,8 @@
       const body = await res.json();
       const rows = Array.isArray(body.rows) ? body.rows : [];
       DATA = rows.map(computeRisk);
-      const updated = body.updatedAt ? new Date(body.updatedAt) : null;
-      const when = updated ? updated.toLocaleString('es-MX',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : 'fecha desconocida';
-      setBadge(`<span class="dot" style="background:var(--good)"></span>${DATA.length} solicitudes · actualizado el ${when}`, 'good');
     } catch(err){
-      setBadge('<span class="dot"></span>No se pudo cargar data.json', 'crit');
+      setBadge('No se pudo cargar data.json');
     }
     initFilters();
     renderAll();
