@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard Compras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Public+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light;
+    --page:            #f9f9f7;
+    --surface:         #fcfcfb;
+    --surface-raised:  #ffffff;
+    --ink:             #0b0b0b;
+    --ink-2:           #52514e;
+    --ink-muted:       #898781;
+    --grid:            #e1e0d9;
+    --axis:            #c3c2b7;
+    --border:          rgba(11,11,11,0.10);
+    --accent:          #2a78d6;
+    --accent-ink:      #ffffff;
+
+    --pipe-1: #86b6ef;
+    --pipe-2: #3987e5;
+    --pipe-3: #1c5cab;
+    --pipe-4: #0d366b;
+
+    --prio-normal:  #f0a874;
+    --prio-media:   #eb6834;
+    --prio-urgente: #a83c1f;
+
+    --good:     #0ca30c;
+    --good-bg:  rgba(12,163,12,0.12);
+    --warn:     #b5790a;
+    --warn-bg:  rgba(250,178,25,0.20);
+    --crit:     #d03b3b;
+    --crit-bg:  rgba(208,59,59,0.12);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --page:            #0d0d0d;
+      --surface:         #1a1a19;
+      --surface-raised:  #212120;
+      --ink:             #ffffff;
+      --ink-2:           #c3c2b7;
+      --ink-muted:       #898781;
+      --grid:            #2c2c2a;
+      --axis:            #383835;
+      --border:          rgba(255,255,255,0.10);
+      --accent:          #3987e5;
+      --accent-ink:      #ffffff;
+
+      --prio-normal:  #b96a3a;
+      --prio-media:   #d95926;
+      --prio-urgente: #ff8f5c;
+
+      --good:     #0ca30c;
+      --good-bg:  rgba(12,163,12,0.22);
+      --warn:     #fab219;
+      --warn-bg:  rgba(250,178,25,0.20);
+      --crit:     #e66767;
+      --crit-bg:  rgba(230,103,103,0.20);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --page:            #0d0d0d;
+    --surface:         #1a1a19;
+    --surface-raised:  #212120;
+    --ink:             #ffffff;
+    --ink-2:           #c3c2b7;
+    --ink-muted:       #898781;
+    --grid:            #2c2c2a;
+    --axis:            #383835;
+    --border:          rgba(255,255,255,0.10);
+    --accent:          #3987e5;
+    --accent-ink:      #ffffff;
+
+    --prio-normal:  #b96a3a;
+    --prio-media:   #d95926;
+    --prio-urgente: #ff8f5c;
+
+    --good:     #0ca30c;
+    --good-bg:  rgba(12,163,12,0.22);
+    --warn:     #fab219;
+    --warn-bg:  rgba(250,178,25,0.20);
+    --crit:     #e66767;
+    --crit-bg:  rgba(230,103,103,0.20);
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    background:var(--page);
+    color:var(--ink);
+    font-family:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:1360px;
+    margin:0 auto;
+    padding:28px 20px 64px;
+  }
+  h1,h2,h3{ margin:0; text-wrap:balance; }
+  .eyebrow{
+    font-family:"Big Shoulders Display", system-ui, sans-serif;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.14em;
+    font-size:12px;
+    color:var(--ink-muted);
+  }
+  .mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; font-variant-numeric:tabular-nums; }
+
+  /* ---------- header ---------- */
+  header.top{
+    display:flex; align-items:flex-end; justify-content:space-between; gap:16px;
+    flex-wrap:wrap;
+    padding-bottom:20px; margin-bottom:20px;
+    border-bottom:1px solid var(--border);
+  }
+  header.top .title-block h1{
+    font-family:"Big Shoulders Display", system-ui, sans-serif;
+    font-weight:800;
+    font-size:clamp(28px, 4vw, 40px);
+    letter-spacing:0.01em;
+    line-height:1;
+    margin-top:6px;
+  }
+  .badge{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:"IBM Plex Mono", monospace;
+    font-size:11px; font-weight:500;
+    padding:5px 10px; border-radius:100px;
+    border:1px solid var(--warn);
+    color:var(--warn);
+    background:var(--warn-bg);
+    white-space:nowrap;
+  }
+  .badge .dot{ width:6px; height:6px; border-radius:50%; background:var(--warn); flex:none; }
+  .meta-line{ color:var(--ink-2); font-size:13px; margin-top:8px; }
+
+  /* ---------- filter bar ---------- */
+  .filters{
+    position:sticky; top:0; z-index:20;
+    display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+    background:var(--page);
+    padding:12px 0 16px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:24px;
+  }
+  .field{ display:flex; flex-direction:column; gap:4px; }
+  .field label{ font-size:11px; color:var(--ink-muted); text-transform:uppercase; letter-spacing:0.06em; }
+  select, input[type="search"]{
+    font:inherit; font-size:13px;
+    background:var(--surface-raised);
+    color:var(--ink);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:7px 10px;
+    min-width:132px;
+  }
+  select:focus-visible, input:focus-visible, button:focus-visible, th button:focus-visible{
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+  input[type="search"]{ min-width:200px; }
+  .field.search{ flex:1 1 200px; }
+  button.reset{
+    font:inherit; font-size:13px; font-weight:600;
+    background:transparent; color:var(--ink-2);
+    border:1px solid var(--border); border-radius:8px;
+    padding:8px 12px; cursor:pointer; align-self:flex-end;
+  }
+  button.reset:hover{ color:var(--ink); border-color:var(--ink-muted); }
+  .count-pill{
+    margin-left:auto; align-self:flex-end;
+    font-size:13px; color:var(--ink-2);
+    padding:8px 0;
+  }
+  .count-pill b{ color:var(--ink); }
+
+  /* ---------- KPI strip ---------- */
+  .kpis{
+    display:grid;
+    grid-template-columns:repeat(6, 1fr);
+    gap:12px;
+    margin-bottom:28px;
+  }
+  .kpi{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px 16px 14px;
+    display:flex; flex-direction:column; gap:8px;
+    min-width:0;
+  }
+  .kpi .label{ font-size:12px; color:var(--ink-2); font-weight:600; }
+  .kpi .value{ font-family:"IBM Plex Mono", monospace; font-size:30px; font-weight:600; line-height:1; letter-spacing:-0.01em; }
+  .kpi .sub{ font-size:12px; color:var(--ink-muted); }
+  .kpi.good .value{ color:var(--good); }
+  .kpi.warn .value{ color:var(--warn); }
+  .kpi.crit .value{ color:var(--crit); }
+  .kpi .delta{ font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600; }
+  .delta.good{ color:var(--good); }
+  .delta.warn{ color:var(--warn); }
+  .delta.crit{ color:var(--crit); }
+
+  /* ---------- panels ---------- */
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:18px 20px 20px;
+  }
+  .panel h2{ font-size:15px; font-weight:700; }
+  .panel .panel-sub{ font-size:12.5px; color:var(--ink-muted); margin-top:2px; }
+  .panel-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+
+  .tabs{ display:flex; gap:4px; background:var(--page); border:1px solid var(--border); border-radius:8px; padding:3px; }
+  .tabs button{
+    font:inherit; font-size:12.5px; font-weight:600; color:var(--ink-2);
+    background:transparent; border:none; border-radius:6px; padding:6px 11px; cursor:pointer;
+  }
+  .tabs button.active{ background:var(--surface-raised); color:var(--ink); box-shadow:0 1px 2px var(--border); }
+
+  .row-2{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  .charts-block{ margin-bottom:16px; }
+
+  /* bar chart */
+  .bars{ display:flex; flex-direction:column; gap:10px; }
+  .bar-item{ display:grid; grid-template-columns:128px 1fr 44px; align-items:center; gap:10px; }
+  .bar-item .name{ font-size:12.5px; color:var(--ink-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .bar-track{ position:relative; height:16px; background:var(--grid); border-radius:4px; overflow:hidden; }
+  .bar-fill{ position:absolute; inset:0 auto 0 0; border-radius:4px; }
+  .bar-item .val{ font-family:"IBM Plex Mono",monospace; font-size:12.5px; text-align:right; color:var(--ink); }
+
+  .stack-track{ position:relative; height:18px; background:var(--grid); border-radius:4px; overflow:hidden; display:flex; }
+  .stack-seg{ height:100%; }
+  .stack-seg + .stack-seg{ border-left:2px solid var(--surface); }
+
+  .legend{ display:flex; flex-wrap:wrap; gap:14px; margin-top:14px; }
+  .legend .item{ display:flex; align-items:center; gap:6px; font-size:12px; color:var(--ink-2); }
+  .legend .swatch{ width:10px; height:10px; border-radius:3px; flex:none; }
+
+  .tooltip{
+    position:fixed; pointer-events:none; z-index:50;
+    background:var(--surface-raised); color:var(--ink);
+    border:1px solid var(--border); border-radius:8px;
+    padding:8px 10px; font-size:12px; line-height:1.5;
+    box-shadow:0 6px 20px rgba(0,0,0,0.18);
+    opacity:0; transform:translateY(2px);
+    transition:opacity .1s ease;
+    max-width:220px;
+  }
+  .tooltip.show{ opacity:1; }
+  .tooltip .t-title{ font-weight:700; margin-bottom:2px; }
+
+  /* ---------- risk chip ---------- */
+  .chip{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:12px; font-weight:600;
+    padding:4px 9px 4px 7px; border-radius:100px;
+    white-space:nowrap;
+  }
+  .chip .mark{ width:9px; height:9px; flex:none; }
+  .chip.good{ color:var(--good); background:var(--good-bg); }
+  .chip.good .mark{ border-radius:50%; background:var(--good); }
+  .chip.warn{ color:var(--warn); background:var(--warn-bg); }
+  .chip.warn .mark{ background:var(--warn); clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%); }
+  .chip.crit{ color:var(--crit); background:var(--crit-bg); }
+  .chip.crit .mark{ background:var(--crit); clip-path:polygon(50% 0%, 0% 100%, 100% 100%); }
+  .chip.neutral{ color:var(--ink-2); background:var(--grid); }
+  .chip.neutral .mark{ border-radius:50%; background:var(--ink-muted); }
+
+  .prio{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; }
+  .prio i{ width:8px; height:8px; border-radius:2px; flex:none; }
+
+  /* ---------- table ---------- */
+  .table-wrap{ overflow-x:auto; border:1px solid var(--border); border-radius:12px; background:var(--surface); }
+  table{ width:100%; border-collapse:collapse; min-width:1400px; }
+  thead th{
+    position:sticky; top:0;
+    background:var(--surface);
+    text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.05em;
+    color:var(--ink-muted); font-weight:700;
+    padding:12px 14px; border-bottom:1px solid var(--border);
+    white-space:nowrap;
+  }
+  thead th button{
+    font:inherit; background:none; border:none; color:inherit; cursor:pointer;
+    display:inline-flex; align-items:center; gap:4px; padding:0;
+  }
+  tbody td{
+    padding:11px 14px; font-size:13px; border-bottom:1px solid var(--border);
+    color:var(--ink); vertical-align:middle;
+  }
+  tbody tr:last-child td{ border-bottom:none; }
+  tbody tr:hover{ background:rgba(137,135,129,0.06); }
+  td.num, th.num{ text-align:right; font-family:"IBM Plex Mono",monospace; }
+  td.item-cell .art{ font-weight:600; }
+  td.item-cell .qty{ color:var(--ink-muted); font-size:12px; }
+  td.folio{ font-family:"IBM Plex Mono",monospace; color:var(--ink-2); }
+  .empty-row td{ text-align:center; color:var(--ink-muted); padding:40px 0; }
+
+  footer.note{
+    margin-top:22px; padding-top:16px; border-top:1px solid var(--border);
+    font-size:12.5px; color:var(--ink-muted); line-height:1.6;
+  }
+  footer.note strong{ color:var(--ink-2); }
+
+  @media (max-width:980px){
+    .kpis{ grid-template-columns:repeat(3,1fr); }
+    .row-2{ grid-template-columns:1fr; }
+    .bar-item{ grid-template-columns:96px 1fr 40px; }
+  }
+  @media (max-width:520px){
+    .kpis{ grid-template-columns:1fr 1fr; }
+    .filters{ position:static; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="title-block">
+      <div class="eyebrow">Panel de control · Compras</div>
+      <h1>Dashboard Compras</h1>
+      <div class="meta-line">Ciclo de compra: de la requisición a la recepción · meta <span class="mono">10 días</span></div>
+    </div>
+    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+      <span class="badge" id="sync-badge"><span class="dot"></span>Cargando datos…</span>
+    </div>
+  </header>
+
+  <div class="filters" id="filters">
+    <div class="field">
+      <label for="f-unidad">Unidad de negocio</label>
+      <select id="f-unidad"><option value="">Todas</option></select>
+    </div>
+    <div class="field">
+      <label for="f-sucursal">Sucursal</label>
+      <select id="f-sucursal"><option value="">Todas</option></select>
+    </div>
+    <div class="field">
+      <label for="f-depto">Departamento</label>
+      <select id="f-depto"><option value="">Todos</option></select>
+    </div>
+    <div class="field">
+      <label for="f-prioridad">Prioridad</label>
+      <select id="f-prioridad"><option value="">Todas</option></select>
+    </div>
+    <div class="field">
+      <label for="f-estatus">Estatus</label>
+      <select id="f-estatus"><option value="">Todos</option></select>
+    </div>
+    <div class="field search">
+      <label for="f-search">Buscar</label>
+      <input type="search" id="f-search" placeholder="Artículo, folio o solicitante…">
+    </div>
+    <button class="reset" id="btn-reset">Limpiar filtros</button>
+    <div class="count-pill" id="count-pill"></div>
+  </div>
+
+  <section class="kpis" id="kpis"></section>
+
+  <section class="panel charts-block">
+    <div class="panel-head">
+      <div>
+        <h2>Cumplimiento por dimensión</h2>
+        <div class="panel-sub">Solicitudes abiertas (no entregadas), agrupadas y coloreadas por semáforo de vencimiento.</div>
+      </div>
+      <div class="tabs" id="dim-tabs">
+        <button data-dim="unidad" class="active">Unidad de negocio</button>
+        <button data-dim="sucursal">Sucursal</button>
+        <button data-dim="departamento">Departamento</button>
+      </div>
+    </div>
+    <div class="bars" id="dim-chart"></div>
+    <div class="legend">
+      <div class="item"><span class="swatch" style="background:var(--good)"></span>En tiempo</div>
+      <div class="item"><span class="swatch" style="background:var(--warn)"></span>Por vencer (≤2 días)</div>
+      <div class="item"><span class="swatch" style="background:var(--crit)"></span>Vencida</div>
+      <div class="item"><span class="swatch" style="background:var(--ink-muted)"></span>Sin fecha estimada</div>
+    </div>
+  </section>
+
+  <div class="row-2" style="margin-top:16px;">
+    <section class="panel">
+      <div class="panel-head"><div><h2>Solicitudes por estatus</h2><div class="panel-sub">Todo el histórico visible con los filtros actuales.</div></div></div>
+      <div class="bars" id="status-chart"></div>
+    </section>
+    <section class="panel">
+      <div class="panel-head"><div><h2>Solicitudes por prioridad</h2><div class="panel-sub">Todo el histórico visible con los filtros actuales.</div></div></div>
+      <div class="bars" id="priority-chart"></div>
+    </section>
+  </div>
+
+  <section class="panel" style="margin-top:16px; padding:0;">
+    <div class="panel-head" style="padding:18px 20px 0;">
+      <div><h2>Solicitudes</h2><div class="panel-sub">Cada fila es una requisición. El semáforo compara la fecha estimada de entrega con hoy.</div></div>
+    </div>
+    <div class="table-wrap" style="margin:16px 20px 20px; border-radius:10px;">
+      <table id="table">
+        <thead>
+          <tr>
+            <th>Semáforo</th>
+            <th><button data-sort="folio">Folio ↕</button></th>
+            <th>Solicitante</th>
+            <th>Artículo</th>
+            <th>Unidad</th>
+            <th>Sucursal</th>
+            <th>Departamento</th>
+            <th>Prioridad</th>
+            <th>Estatus</th>
+            <th><button data-sort="fechaSolicitud">Solicitud ↕</button></th>
+            <th><button data-sort="fechaEstimada">Estimada ↕</button></th>
+            <th class="num"><button data-sort="cicloDias">Ciclo (d) ↕</button></th>
+            <th>Recepción real</th>
+            <th>Notas de seguimiento</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="note">
+    <strong>Sobre estos datos:</strong> vienen de “Control de pedidos 2026 whatsapp” y se vuelven a leer automáticamente
+    cada 30 minutos (ver <code>.github/workflows/deploy.yml</code>). Solo las solicitudes más recientes traen
+    <em>Unidad de negocio</em> y <em>fecha estimada</em> de origen — el resto se completó infiriendo la unidad a partir de
+    la sucursal original. Las columnas <strong>Recepción real</strong> y <strong>Notas de seguimiento</strong> están listas
+    para mostrarse pero hoy no existen en la hoja — agrégalas al formulario/hoja (una fecha y un texto libre) para que el
+    equipo de compras cierre el ciclo ahí mismo y este dashboard las recoja solo, sin depender de otro sistema.
+  </footer>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ================= real data, loaded from data.json ================= */
+  const META_DIAS = 10;
+  const MS_DAY = 86400000;
+  const todayD = new Date(); todayD.setHours(0,0,0,0);
+
+  const STATUS_ORDER = ['Pendiente','En proceso / Cotizando','Comprando / Recibido','Entregado'];
+  const STATUS_COLOR = { 'Pendiente':'var(--pipe-1)', 'En proceso / Cotizando':'var(--pipe-2)', 'Comprando / Recibido':'var(--pipe-3)', 'Entregado':'var(--pipe-4)' };
+  const PRIO_ORDER = ['Normal','Media','Urgente'];
+  const PRIO_COLOR = { 'Normal':'var(--prio-normal)', 'Media':'var(--prio-media)', 'Urgente':'var(--prio-urgente)' };
+
+  function parseD(s){ if(!s) return null; const [y,m,d]=s.split('-').map(Number); return new Date(y, m-1, d); }
+  function diffDays(a,b){ return Math.round((a-b)/MS_DAY); }
+  function fmtD(s){ if(!s) return '—'; const d=parseD(s); return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'}); }
+
+  function computeRisk(r){
+    const solD = parseD(r.fechaSolicitud);
+    const estD = parseD(r.fechaEstimada);
+    const recD = parseD(r.fechaRecibido);
+    const abierta = r.estatus !== 'Entregado';
+    let risk, riskLabel, cicloDias = null;
+
+    if(!abierta){
+      if(recD){
+        cicloDias = diffDays(recD, solD);
+        if(estD){
+          const onTime = recD <= estD;
+          risk = onTime ? 'good' : 'crit';
+          riskLabel = onTime ? `Entregado a tiempo · ${cicloDias} d` : `Entregado con retraso · ${cicloDias} d`;
+        } else {
+          risk = 'unknown';
+          riskLabel = `Entregado · ${cicloDias} d (sin fecha estimada para comparar)`;
+        }
+      } else {
+        risk = 'unknown';
+        riskLabel = 'Entregado (sin fecha de recepción registrada)';
+      }
+    } else if(estD){
+      const remaining = diffDays(estD, todayD);
+      if(remaining < 0){ risk='crit'; riskLabel = `Vencido hace ${Math.abs(remaining)} d`; }
+      else if(remaining <= 2){ risk='warn'; riskLabel = remaining===0 ? 'Vence hoy' : `Vence en ${remaining} d`; }
+      else { risk='good'; riskLabel = `En tiempo · faltan ${remaining} d`; }
+    } else {
+      risk = 'unknown';
+      riskLabel = 'Sin fecha estimada';
+    }
+    return Object.assign({}, r, { cicloDias, risk, riskLabel, abierta });
+  }
+
+  let DATA = [];
+
+  /* ================= filter state ================= */
+  const state = { unidad:'', sucursal:'', departamento:'', prioridad:'', estatus:'', search:'', dim:'unidad', sortKey:'fechaSolicitud', sortDir:-1 };
+
+  function uniques(key){ return Array.from(new Set(DATA.map(d=>d[key]))).sort((a,b)=>a.localeCompare(b,'es')); }
+
+  function fillSelect(id, values, current){
+    const el = document.getElementById(id);
+    const keep = el.querySelector('option[value=""]');
+    el.innerHTML = '';
+    el.appendChild(keep);
+    values.forEach(v=>{
+      const o = document.createElement('option');
+      o.value = v; o.textContent = v;
+      if(v === current) o.selected = true;
+      el.appendChild(o);
+    });
+  }
+
+  function initFilters(){
+    fillSelect('f-unidad', uniques('unidad'), state.unidad);
+    fillSelect('f-sucursal', uniques('sucursal'), state.sucursal);
+    fillSelect('f-depto', uniques('departamento'), state.departamento);
+    fillSelect('f-prioridad', PRIO_ORDER.filter(p=>uniques('prioridad').includes(p)), state.prioridad);
+    fillSelect('f-estatus', STATUS_ORDER.filter(s=>uniques('estatus').includes(s)), state.estatus);
+  }
+
+  function filtered(){
+    const q = state.search.trim().toLowerCase();
+    return DATA.filter(d=>
+      (!state.unidad || d.unidad===state.unidad) &&
+      (!state.sucursal || d.sucursal===state.sucursal) &&
+      (!state.departamento || d.departamento===state.departamento) &&
+      (!state.prioridad || d.prioridad===state.prioridad) &&
+      (!state.estatus || d.estatus===state.estatus) &&
+      (!q || d.articulo.toLowerCase().includes(q) || d.solicitante.toLowerCase().includes(q) || d.folio.toLowerCase().includes(q))
+    );
+  }
+
+  /* ================= tooltip ================= */
+  const tip = document.getElementById('tooltip');
+  function showTip(html, x, y){
+    tip.innerHTML = html;
+    tip.style.left = Math.min(x+14, window.innerWidth-240) + 'px';
+    tip.style.top = (y+14) + 'px';
+    tip.classList.add('show');
+  }
+  function hideTip(){ tip.classList.remove('show'); }
+
+  /* ================= KPI render ================= */
+  function renderKPIs(rows){
+    const delivered = rows.filter(d=>d.estatus==='Entregado' && d.cicloDias!=null);
+    const avgCycle = delivered.length ? (delivered.reduce((a,d)=>a+d.cicloDias,0)/delivered.length) : null;
+    const open = rows.filter(d=>d.abierta);
+    const good = open.filter(d=>d.risk==='good').length;
+    const warn = open.filter(d=>d.risk==='warn').length;
+    const crit = open.filter(d=>d.risk==='crit').length;
+    const unknown = open.filter(d=>d.risk==='unknown').length;
+    const pct = (n)=> open.length ? Math.round(n/open.length*100) : 0;
+
+    const delta = avgCycle===null ? null : (avgCycle - META_DIAS);
+    const deltaTxt = delta===null ? 'faltan fechas de recepción' : (delta<=0 ? `${delta.toFixed(1)} d vs. meta` : `+${delta.toFixed(1)} d vs. meta`);
+    const deltaClass = delta===null ? '' : (delta<=0 ? 'good' : (delta<=2 ? 'warn' : 'crit'));
+
+    const tiles = [
+      {label:'Ciclo promedio real', value: avgCycle===null?'—':avgCycle.toFixed(1), sub: avgCycle===null?`de ${delivered.length} entregas con fecha registrada`:'días, requisición → recepción', extra:`<span class="delta ${deltaClass}">${deltaTxt}</span>`, cls:''},
+      {label:'Solicitudes activas', value: String(open.length), sub:`de ${rows.length} en el filtro actual`, cls:''},
+      {label:'En tiempo', value: `${pct(good)}%`, sub:`${good} solicitud${good===1?'':'es'} abierta${good===1?'':'s'}`, cls:'good'},
+      {label:'Por vencer (≤2 d)', value: `${pct(warn)}%`, sub:`${warn} solicitud${warn===1?'':'es'} abierta${warn===1?'':'s'}`, cls:'warn'},
+      {label:'Vencidas', value: `${pct(crit)}%`, sub:`${crit} solicitud${crit===1?'':'es'} abierta${crit===1?'':'s'}`, cls:'crit'},
+      {label:'Sin fecha estimada', value: String(unknown), sub:`no se puede medir su vencimiento`, cls:''},
+    ];
+    document.getElementById('kpis').innerHTML = tiles.map(t=>`
+      <div class="kpi ${t.cls}">
+        <div class="label">${t.label}</div>
+        <div class="value">${t.value}</div>
+        <div class="sub">${t.sub}</div>
+        ${t.extra||''}
+      </div>`).join('');
+  }
+
+  /* ================= simple ordinal bar chart ================= */
+  function renderOrdinalBars(elId, order, colorMap, rows, key){
+    const el = document.getElementById(elId);
+    const counts = order.map(k=>({k, n: rows.filter(d=>d[key]===k).length}));
+    const max = Math.max(1, ...counts.map(c=>c.n));
+    el.innerHTML = counts.map(c=>`
+      <div class="bar-item" data-k="${c.k}">
+        <div class="name">${c.k}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(c.n/max*100).toFixed(1)}%; background:${colorMap[c.k]}"></div></div>
+        <div class="val">${c.n}</div>
+      </div>`).join('');
+  }
+
+  /* ================= stacked compliance chart ================= */
+  function renderDimChart(rows){
+    const el = document.getElementById('dim-chart');
+    const dim = state.dim;
+    const open = rows.filter(d=>d.abierta);
+    const groups = Array.from(new Set(open.map(d=>d[dim]))).sort((a,b)=>a.localeCompare(b,'es'));
+    if(!groups.length){ el.innerHTML = '<div style="color:var(--ink-muted); font-size:13px; padding:8px 0;">Sin solicitudes abiertas en este filtro.</div>'; return; }
+    const rowsByGroup = groups.map(g=>{
+      const items = open.filter(d=>d[dim]===g);
+      return { g, good: items.filter(d=>d.risk==='good').length, warn: items.filter(d=>d.risk==='warn').length, crit: items.filter(d=>d.risk==='crit').length, unknown: items.filter(d=>d.risk==='unknown').length, total: items.length };
+    }).sort((a,b)=>b.total-a.total);
+    const max = Math.max(1, ...rowsByGroup.map(r=>r.total));
+
+    el.innerHTML = rowsByGroup.map(r=>{
+      const w = (n)=> (n/max*100).toFixed(1)+'%';
+      return `
+      <div class="bar-item" data-group="${r.g}">
+        <div class="name">${r.g}</div>
+        <div class="stack-track">
+          ${r.good?`<div class="stack-seg" data-tip="${r.g}||En tiempo: ${r.good}" style="width:${w(r.good)}; background:var(--good)"></div>`:''}
+          ${r.warn?`<div class="stack-seg" data-tip="${r.g}||Por vencer: ${r.warn}" style="width:${w(r.warn)}; background:var(--warn)"></div>`:''}
+          ${r.crit?`<div class="stack-seg" data-tip="${r.g}||Vencidas: ${r.crit}" style="width:${w(r.crit)}; background:var(--crit)"></div>`:''}
+          ${r.unknown?`<div class="stack-seg" data-tip="${r.g}||Sin fecha estimada: ${r.unknown}" style="width:${w(r.unknown)}; background:var(--ink-muted)"></div>`:''}
+        </div>
+        <div class="val">${r.total}</div>
+      </div>`;
+    }).join('');
+
+    el.querySelectorAll('.stack-seg').forEach(seg=>{
+      seg.addEventListener('mousemove', e=>{
+        const [g,label] = seg.dataset.tip.split('||');
+        showTip(`<div class="t-title">${g}</div>${label}`, e.clientX, e.clientY);
+      });
+      seg.addEventListener('mouseleave', hideTip);
+    });
+  }
+
+  /* ================= risk chip ================= */
+  function riskChip(d){
+    if(d.risk==='good') return `<span class="chip good"><span class="mark"></span>${d.riskLabel}</span>`;
+    if(d.risk==='warn') return `<span class="chip warn"><span class="mark"></span>${d.riskLabel}</span>`;
+    if(d.risk==='crit') return `<span class="chip crit"><span class="mark"></span>${d.riskLabel}</span>`;
+    return `<span class="chip neutral"><span class="mark"></span>${d.riskLabel}</span>`;
+  }
+  function prioBadge(p){ return `<span class="prio"><i style="background:${PRIO_COLOR[p]}"></i>${p}</span>`; }
+
+  /* ================= table ================= */
+  function renderTable(rows){
+    const sorted = rows.slice().sort((a,b)=>{
+      let av=a[state.sortKey], bv=b[state.sortKey];
+      if(state.sortKey==='fechaSolicitud' || state.sortKey==='fechaEstimada'){ av=parseD(av); bv=parseD(bv); }
+      if(av==null && bv==null) return 0;
+      if(av==null) return 1;
+      if(bv==null) return -1;
+      if(av<bv) return -1*state.sortDir;
+      if(av>bv) return 1*state.sortDir;
+      return 0;
+    });
+    const body = document.getElementById('table-body');
+    if(!sorted.length){
+      body.innerHTML = `<tr class="empty-row"><td colspan="14">Ninguna solicitud coincide con estos filtros.</td></tr>`;
+      return;
+    }
+    body.innerHTML = sorted.map(d=>`
+      <tr>
+        <td>${riskChip(d)}</td>
+        <td class="folio">${d.folio}</td>
+        <td>${d.solicitante}</td>
+        <td class="item-cell"><div class="art">${d.articulo}</div><div class="qty">Cant. ${d.cantidad}</div></td>
+        <td>${d.unidad}</td>
+        <td>${d.sucursal}</td>
+        <td>${d.departamento}</td>
+        <td>${prioBadge(d.prioridad)}</td>
+        <td>${d.estatus}</td>
+        <td class="mono">${fmtD(d.fechaSolicitud)}</td>
+        <td class="mono">${fmtD(d.fechaEstimada)}</td>
+        <td class="num mono">${d.cicloDias==null?'—':d.cicloDias}</td>
+        <td class="mono">${fmtD(d.fechaRecibido)}</td>
+        <td>${d.notas ? escapeAttr(d.notas) : '<span style="color:var(--ink-muted)">—</span>'}</td>
+      </tr>`).join('');
+  }
+
+  function escapeAttr(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+
+  /* ================= wire up ================= */
+  function renderAll(){
+    const rows = filtered();
+    renderKPIs(rows);
+    renderDimChart(rows);
+    renderOrdinalBars('status-chart', STATUS_ORDER, STATUS_COLOR, rows, 'estatus');
+    renderOrdinalBars('priority-chart', PRIO_ORDER, PRIO_COLOR, rows, 'prioridad');
+    renderTable(rows);
+    document.getElementById('count-pill').innerHTML = `<b>${rows.length}</b> de ${DATA.length} solicitudes`;
+  }
+
+  ['unidad','sucursal','departamento','prioridad','estatus'].forEach(k=>{
+    document.getElementById('f-'+(k==='departamento'?'depto':k)).addEventListener('change', e=>{
+      state[k] = e.target.value; renderAll();
+    });
+  });
+  document.getElementById('f-search').addEventListener('input', e=>{ state.search = e.target.value; renderAll(); });
+  document.getElementById('btn-reset').addEventListener('click', ()=>{
+    state.unidad=state.sucursal=state.departamento=state.prioridad=state.estatus=state.search='';
+    ['f-unidad','f-sucursal','f-depto','f-prioridad','f-estatus'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('f-search').value='';
+    renderAll();
+  });
+  document.getElementById('dim-tabs').addEventListener('click', e=>{
+    const btn = e.target.closest('button[data-dim]');
+    if(!btn) return;
+    document.querySelectorAll('#dim-tabs button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.dim = btn.dataset.dim;
+    renderDimChart(filtered());
+  });
+  document.querySelectorAll('th [data-sort]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const key = btn.dataset.sort;
+      if(state.sortKey === key){ state.sortDir *= -1; } else { state.sortKey = key; state.sortDir = 1; }
+      renderTable(filtered());
+    });
+  });
+
+  /* ================= load data.json (regenerated on a schedule from the sheet) ================= */
+  const badge = document.getElementById('sync-badge');
+  function setBadge(html, tone){
+    badge.innerHTML = html;
+    const colorVar = tone==='good' ? 'var(--good)' : tone==='crit' ? 'var(--crit)' : 'var(--warn)';
+    const bgVar = tone==='good' ? 'var(--good-bg)' : tone==='crit' ? 'var(--crit-bg)' : 'var(--warn-bg)';
+    badge.style.borderColor = colorVar; badge.style.color = colorVar; badge.style.background = bgVar;
+  }
+
+  (async function loadData(){
+    try{
+      const res = await fetch('./data.json', { cache: 'no-store' });
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      const body = await res.json();
+      const rows = Array.isArray(body.rows) ? body.rows : [];
+      DATA = rows.map(computeRisk);
+      const updated = body.updatedAt ? new Date(body.updatedAt) : null;
+      const when = updated ? updated.toLocaleString('es-MX',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : 'fecha desconocida';
+      setBadge(`<span class="dot" style="background:var(--good)"></span>${DATA.length} solicitudes · actualizado el ${when}`, 'good');
+    } catch(err){
+      setBadge('<span class="dot"></span>No se pudo cargar data.json', 'crit');
+    }
+    initFilters();
+    renderAll();
+  })();
+})();
+</script>
+</body>
+</html>
