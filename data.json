@@ -838,5 +838,20 @@
     }
   ],
   "sourceRowCount": 44,
-  "updatedAt": "2026-09-15T21:41:14.446Z"
+  "updatedAt": "2026-09-15T21:47:11.798Z",
+  "catalog": {
+    "sucursalesPorUnidad": {
+      "EasyFit": [
+        "Cañadas"
+      ],
+      "GEB": [
+        "Universidad"
+      ],
+      "Vivo 47": [
+        "Naciones Unidas",
+        "Gourmetería",
+        "Valle Real"
+      ]
+    }
+  }
 }

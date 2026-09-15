@@ -470,11 +470,23 @@
   }
 
   let DATA = [];
+  let CATALOG = { sucursalesPorUnidad: {} };
 
   /* ================= filter state ================= */
   const state = { unidad:'', sucursal:'', departamento:'', prioridad:'', estatus:'', search:'', dim:'unidad', sortKey:'fechaSolicitud', sortDir:-1 };
 
   function uniques(key, rows){ return Array.from(new Set((rows||DATA).map(d=>d[key]))).sort((a,b)=>a.localeCompare(b,'es')); }
+
+  // Sucursal options blend real data with the known-branches catalog, so a
+  // branch with zero requests so far (e.g. Valle Real) still shows up once
+  // its business unit is selected.
+  function sucursalOptions(unidad){
+    const rowsForUnidad = unidad ? DATA.filter(d=>d.unidad===unidad) : DATA;
+    const fromData = uniques('sucursal', rowsForUnidad);
+    const catalog = CATALOG.sucursalesPorUnidad || {};
+    const fromCatalog = unidad ? (catalog[unidad]||[]) : Object.values(catalog).flat();
+    return Array.from(new Set([...fromData, ...fromCatalog])).sort((a,b)=>a.localeCompare(b,'es'));
+  }
 
   function fillSelect(id, values, current){
     const el = document.getElementById(id);
@@ -494,7 +506,7 @@
     // so a branch/department never shows up under a unit it doesn't belong to.
     const rowsForUnidad = state.unidad ? DATA.filter(d=>d.unidad===state.unidad) : DATA;
     fillSelect('f-unidad', uniques('unidad'), state.unidad);
-    fillSelect('f-sucursal', uniques('sucursal', rowsForUnidad), state.sucursal);
+    fillSelect('f-sucursal', sucursalOptions(state.unidad), state.sucursal);
     fillSelect('f-depto', uniques('departamento', rowsForUnidad), state.departamento);
     fillSelect('f-prioridad', PRIO_ORDER.filter(p=>uniques('prioridad').includes(p)), state.prioridad);
     fillSelect('f-estatus', STATUS_ORDER.filter(s=>uniques('estatus').includes(s)), state.estatus);
@@ -677,7 +689,7 @@
       state[k] = e.target.value;
       if(k==='unidad'){
         const rowsForUnidad = state.unidad ? DATA.filter(d=>d.unidad===state.unidad) : DATA;
-        if(state.sucursal && !uniques('sucursal', rowsForUnidad).includes(state.sucursal)) state.sucursal = '';
+        if(state.sucursal && !sucursalOptions(state.unidad).includes(state.sucursal)) state.sucursal = '';
         if(state.departamento && !uniques('departamento', rowsForUnidad).includes(state.departamento)) state.departamento = '';
         initFilters();
       }
@@ -721,6 +733,7 @@
       const body = await res.json();
       const rows = Array.isArray(body.rows) ? body.rows : [];
       DATA = rows.map(computeRisk);
+      if(body.catalog) CATALOG = body.catalog;
     } catch(err){
       setBadge('No se pudo cargar data.json');
     }

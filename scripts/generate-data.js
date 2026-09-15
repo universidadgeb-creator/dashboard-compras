@@ -68,6 +68,14 @@ const UNIDAD_INFER = {
   GOURMETERIA: { unidad: 'Vivo 47', sucursal: 'Gourmetería' },
 };
 
+// Known branches per business unit, kept even when a branch has zero requests
+// so far (e.g. Valle Real) — add new ones here as the org grows.
+const SUCURSALES_CONOCIDAS = {
+  'EasyFit': ['Cañadas'],
+  'GEB': ['Universidad'],
+  'Vivo 47': ['Naciones Unidas', 'Gourmetería', 'Valle Real'],
+};
+
 async function main() {
   const csv = await fetchCSV(CSV_URL);
   const rows = parseCSV(csv);
@@ -134,7 +142,12 @@ async function main() {
     };
   });
 
-  const payload = { rows: out, sourceRowCount: out.length, updatedAt: new Date().toISOString() };
+  const payload = {
+    rows: out,
+    sourceRowCount: out.length,
+    updatedAt: new Date().toISOString(),
+    catalog: { sucursalesPorUnidad: SUCURSALES_CONOCIDAS },
+  };
   fs.writeFileSync(OUT_PATH, JSON.stringify(payload, null, 2));
   console.log(`Wrote ${out.length} rows to ${OUT_PATH}`);
 }
