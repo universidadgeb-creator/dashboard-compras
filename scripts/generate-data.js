@@ -11,7 +11,7 @@ const OUT_PATH = path.join(__dirname, '..', 'data.json');
 
 function fetchCSV(url, redirectsLeft = 5) {
   return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
+    const req = https.get(url, { timeout: 15000 }, (res) => {
       if ([301, 302, 303, 307, 308].includes(res.statusCode) && res.headers.location && redirectsLeft > 0) {
         res.resume();
         return resolve(fetchCSV(res.headers.location, redirectsLeft - 1));
@@ -24,7 +24,9 @@ function fetchCSV(url, redirectsLeft = 5) {
       res.setEncoding('utf8');
       res.on('data', (chunk) => (data += chunk));
       res.on('end', () => resolve(data));
-    }).on('error', reject);
+    });
+    req.on('timeout', () => req.destroy(new Error('Timed out fetching sheet')));
+    req.on('error', reject);
   });
 }
 
@@ -59,6 +61,7 @@ function parseDT(s) {
   const [datePart] = s.split(' ');
   const [d, m, y] = datePart.split('/').map(Number);
   if (!d || !m || !y) return null;
+  if (d < 1 || d > 31 || m < 1 || m > 12 || y < 2000 || y > 2100) return null;
   const pad = (n) => String(n).padStart(2, '0');
   return `${y}-${pad(m)}-${pad(d)}`;
 }
@@ -80,6 +83,12 @@ async function main() {
   const csv = await fetchCSV(CSV_URL);
   const rows = parseCSV(csv);
 
+  // A 200 response can still be the wrong body (Google interstitial/consent
+  // page, a moved sheet, etc.) — bail out loudly instead of writing garbage.
+  if (!rows.length || !rows[0].some((h) => h.trim() === 'Marca temporal')) {
+    throw new Error('Unexpected sheet shape: "Marca temporal" header not found — refusing to overwrite data.json');
+  }
+
   const seen = {};
   const header = rows[0].map((h) => {
     const base = h.trim();
@@ -88,16 +97,20 @@ async function main() {
     return base + '_' + (seen[base] + 1);
   });
 
+  // Keep each row's original position in the sheet (1-based, header excluded)
+  // as its folio's numeric source, so folios stay stable across regenerations
+  // even if an earlier row's first cell is briefly blank or later filled in.
   const raw = rows
     .slice(1)
-    .filter((r) => (r[0] || '').trim() !== '')
-    .map((r) => {
-      const o = {};
+    .map((r, i) => ({ r, sheetRow: i + 1 }))
+    .filter(({ r }) => (r[0] || '').trim() !== '')
+    .map(({ r, sheetRow }) => {
+      const o = { sheetRow };
       header.forEach((h, i) => (o[h] = (r[i] || '').trim()));
       return o;
     });
 
-  const out = raw.map((r, idx) => {
+  const out = raw.map((r) => {
     const oldSucursal = r['SUCURSAL'];
     const unidadExplicit = r['Unidad de Negocio'] || '';
     const sucursalExplicit = r['Selecciona tu sucursal'] || r['Selecciona Sucursal'] || r['Sucursal en la que laboras'] || '';
@@ -113,28 +126,29 @@ async function main() {
     }
 
     let estatus = r['Estatus'] || '';
-    let estatusSinDefinir = false;
-    if (!estatus) { estatus = 'Pendiente'; estatusSinDefinir = true; }
+    if (!estatus) estatus = 'Pendiente';
     // A recorded receipt date closes the cycle, regardless of the Estatus cell.
-    if (r['Fecha de recepción real']) { estatus = 'Entregado'; estatusSinDefinir = false; }
+    if (r['Fecha de recepción real']) estatus = 'Entregado';
 
     const cantidadNum = parseInt(r['Cantidad'], 10);
 
     return {
-      folio: 'REQ-' + String(idx + 1).padStart(3, '0'),
+      folio: 'REQ-' + String(r.sheetRow).padStart(4, '0'),
       fechaSolicitud: parseDT(r['Marca temporal']),
       solicitante: r['Escribe tu nombre'] || 'Sin nombre',
       correo: r['Escribe tu correo electrónico'] || '',
-      unidad: unidad || '',
+      // 'Sin especificar' (not '') for a legacy row whose old SUCURSAL value
+      // isn't in UNIDAD_INFER — makes an unmapped row visible/filterable
+      // instead of silently blank, consistent with departamento below.
+      unidad: unidad || 'Sin especificar',
       unidadInferida,
-      sucursal: sucursal || '',
+      sucursal: sucursal || 'Sin especificar',
       departamento: departamento || 'Sin especificar',
       articulo: r['Nombre del articulo'] || '(sin descripción)',
       cantidad: isNaN(cantidadNum) ? 1 : cantidadNum,
       prioridad: r['Prioridad'] || 'Normal',
       comentarios: r['Comentarios'] || '',
       estatus,
-      estatusSinDefinir,
       fechaEstimada: parseDT(r['Fecha estimada de entrega']),
       // Populated once the sheet has these two columns (compras team fills them in directly).
       fechaRecibido: parseDT(r['Fecha de recepción real']),

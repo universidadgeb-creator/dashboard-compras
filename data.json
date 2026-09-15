@@ -1,7 +1,7 @@
 {
   "rows": [
     {
-      "folio": "REQ-001",
+      "folio": "REQ-0001",
       "fechaSolicitud": "2026-04-01",
       "solicitante": "Alicia dinero",
       "correo": "",
@@ -14,13 +14,12 @@
       "prioridad": "Normal",
       "comentarios": "ya se mando a imprimir",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-002",
+      "folio": "REQ-0002",
       "fechaSolicitud": "2026-04-07",
       "solicitante": "Andrea bedoy",
       "correo": "",
@@ -33,13 +32,12 @@
       "prioridad": "Normal",
       "comentarios": "Porfa",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-003",
+      "folio": "REQ-0003",
       "fechaSolicitud": "2026-04-07",
       "solicitante": "Andrea",
       "correo": "",
@@ -52,13 +50,12 @@
       "prioridad": "Urgente",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-004",
+      "folio": "REQ-0004",
       "fechaSolicitud": "2026-04-08",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -71,13 +68,12 @@
       "prioridad": "Normal",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-005",
+      "folio": "REQ-0005",
       "fechaSolicitud": "2026-04-18",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -90,13 +86,12 @@
       "prioridad": "Normal",
       "comentarios": "Si se otro olor que no sea azul",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-006",
+      "folio": "REQ-0006",
       "fechaSolicitud": "2026-04-18",
       "solicitante": "Andrea bedoy",
       "correo": "",
@@ -109,13 +104,12 @@
       "prioridad": "Normal",
       "comentarios": "Son los que vienen en el link",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-007",
+      "folio": "REQ-0007",
       "fechaSolicitud": "2026-04-27",
       "solicitante": "Andrea bedoy",
       "correo": "",
@@ -128,13 +122,12 @@
       "prioridad": "Normal",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-008",
+      "folio": "REQ-0008",
       "fechaSolicitud": "2026-04-27",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -147,13 +140,12 @@
       "prioridad": "Normal",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-009",
+      "folio": "REQ-0009",
       "fechaSolicitud": "2026-05-21",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -166,13 +158,12 @@
       "prioridad": "Normal",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-010",
+      "folio": "REQ-0010",
       "fechaSolicitud": "2026-05-29",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -185,13 +176,12 @@
       "prioridad": "Urgente",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-011",
+      "folio": "REQ-0011",
       "fechaSolicitud": "2026-06-10",
       "solicitante": "David Alejandro Sanchez Alamos",
       "correo": "",
@@ -204,13 +194,12 @@
       "prioridad": "Urgente",
       "comentarios": "Son 24 Pz",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-012",
+      "folio": "REQ-0012",
       "fechaSolicitud": "2026-06-10",
       "solicitante": "David Alejandro Sanchez Alamos",
       "correo": "",
@@ -223,13 +212,12 @@
       "prioridad": "Urgente",
       "comentarios": "Son 48 Pz, cada caja tiene 12 pz en total serían 4 cajas con 12 pz.",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-013",
+      "folio": "REQ-0013",
       "fechaSolicitud": "2026-06-10",
       "solicitante": "David Alejandro Sanchez Alamos",
       "correo": "",
@@ -242,13 +230,12 @@
       "prioridad": "Urgente",
       "comentarios": "Son 48 Pz solo contando 1 pila cada caja como se ve en la imagen tiene 24 en total serían 2 cajas de esas pilas.",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-014",
+      "folio": "REQ-0014",
       "fechaSolicitud": "2026-06-20",
       "solicitante": "David Alejandro Sanchez Alamos",
       "correo": "",
@@ -261,13 +248,12 @@
       "prioridad": "Urgente",
       "comentarios": "200 litros que equivalen a 10 bidones del producto",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-015",
+      "folio": "REQ-0015",
       "fechaSolicitud": "2026-06-20",
       "solicitante": "David Alejandro Sanchez Alamos",
       "correo": "",
@@ -280,13 +266,12 @@
       "prioridad": "Urgente",
       "comentarios": "160 litos que equivalen a 8 bidones del producto",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-016",
+      "folio": "REQ-0016",
       "fechaSolicitud": "2026-06-20",
       "solicitante": "David Alejandro Sanchez Alamos",
       "correo": "",
@@ -299,13 +284,12 @@
       "prioridad": "Urgente",
       "comentarios": "3 botes del producto",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-017",
+      "folio": "REQ-0017",
       "fechaSolicitud": "2026-06-23",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -318,13 +302,12 @@
       "prioridad": "Normal",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-018",
+      "folio": "REQ-0018",
       "fechaSolicitud": "2026-06-23",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -337,13 +320,12 @@
       "prioridad": "Normal",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-019",
+      "folio": "REQ-0019",
       "fechaSolicitud": "2026-06-23",
       "solicitante": "Andrea bedoy",
       "correo": "",
@@ -356,13 +338,12 @@
       "prioridad": "Normal",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-020",
+      "folio": "REQ-0020",
       "fechaSolicitud": "2026-06-23",
       "solicitante": "Andrea  bedoy",
       "correo": "",
@@ -375,13 +356,12 @@
       "prioridad": "Normal",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-021",
+      "folio": "REQ-0021",
       "fechaSolicitud": "2026-07-02",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -394,13 +374,12 @@
       "prioridad": "Urgente",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-022",
+      "folio": "REQ-0022",
       "fechaSolicitud": "2026-07-02",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -413,13 +392,12 @@
       "prioridad": "Urgente",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-023",
+      "folio": "REQ-0023",
       "fechaSolicitud": "2026-07-03",
       "solicitante": "David Alejandro Sanchez Alamos",
       "correo": "",
@@ -432,13 +410,12 @@
       "prioridad": "Urgente",
       "comentarios": "Cafetera chica como la que se ve en la imagen",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-024",
+      "folio": "REQ-0024",
       "fechaSolicitud": "2026-07-10",
       "solicitante": "David Alejandro Sanchez Alamos",
       "correo": "",
@@ -451,13 +428,12 @@
       "prioridad": "Media",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-025",
+      "folio": "REQ-0025",
       "fechaSolicitud": "2026-07-15",
       "solicitante": "David Alejandro Sanchez Alamos",
       "correo": "",
@@ -470,13 +446,12 @@
       "prioridad": "Normal",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-026",
+      "folio": "REQ-0026",
       "fechaSolicitud": "2026-07-16",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -489,13 +464,12 @@
       "prioridad": "Normal",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-027",
+      "folio": "REQ-0027",
       "fechaSolicitud": "2026-07-16",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -508,13 +482,12 @@
       "prioridad": "Normal",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-028",
+      "folio": "REQ-0028",
       "fechaSolicitud": "2026-07-16",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -527,13 +500,12 @@
       "prioridad": "Media",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-029",
+      "folio": "REQ-0029",
       "fechaSolicitud": "2026-07-21",
       "solicitante": "David Alejandro Sanchez Alamos",
       "correo": "",
@@ -546,13 +518,12 @@
       "prioridad": "Urgente",
       "comentarios": "",
       "estatus": "Pendiente",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-030",
+      "folio": "REQ-0030",
       "fechaSolicitud": "2026-08-10",
       "solicitante": "David Alejandro Sanchez Alamos",
       "correo": "",
@@ -565,13 +536,12 @@
       "prioridad": "Media",
       "comentarios": "No es urgente pero si es bastante requerido para un area, el gerente ya esta al corriente del pedido de este producto",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-031",
+      "folio": "REQ-0031",
       "fechaSolicitud": "2026-08-13",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -584,13 +554,12 @@
       "prioridad": "Normal",
       "comentarios": "",
       "estatus": "En proceso / Cotizando",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-032",
+      "folio": "REQ-0032",
       "fechaSolicitud": "2026-08-14",
       "solicitante": "David Alejandro Sanchez Alamos",
       "correo": "",
@@ -603,13 +572,12 @@
       "prioridad": "Media",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-033",
+      "folio": "REQ-0033",
       "fechaSolicitud": "2026-08-17",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -622,13 +590,12 @@
       "prioridad": "Urgente",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-034",
+      "folio": "REQ-0034",
       "fechaSolicitud": "2026-08-18",
       "solicitante": "David Alejandro Sanchez Alamos",
       "correo": "",
@@ -641,13 +608,12 @@
       "prioridad": "Urgente",
       "comentarios": "Son 100 litros de shampo verde que mandan con proveedor",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-035",
+      "folio": "REQ-0035",
       "fechaSolicitud": "2026-08-20",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -660,13 +626,12 @@
       "prioridad": "Normal",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-036",
+      "folio": "REQ-0036",
       "fechaSolicitud": "2026-09-01",
       "solicitante": "David Alejandro Sanchez Alamos",
       "correo": "",
@@ -679,13 +644,12 @@
       "prioridad": "Urgente",
       "comentarios": "Los necesitamos para comunicarnos de mejor manera, puse 8 pero refiriendome a 8 pz",
       "estatus": "En proceso / Cotizando",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-037",
+      "folio": "REQ-0037",
       "fechaSolicitud": "2026-09-04",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -698,13 +662,12 @@
       "prioridad": "Urgente",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-038",
+      "folio": "REQ-0038",
       "fechaSolicitud": "2026-09-04",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -717,13 +680,12 @@
       "prioridad": "Urgente",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-039",
+      "folio": "REQ-0039",
       "fechaSolicitud": "2026-09-07",
       "solicitante": "Andrea Bedoy",
       "correo": "",
@@ -736,13 +698,12 @@
       "prioridad": "Urgente",
       "comentarios": "",
       "estatus": "En proceso / Cotizando",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-040",
+      "folio": "REQ-0040",
       "fechaSolicitud": "2026-09-08",
       "solicitante": "Andrea bedoy",
       "correo": "",
@@ -755,13 +716,12 @@
       "prioridad": "Urgente",
       "comentarios": "",
       "estatus": "Entregado",
-      "estatusSinDefinir": false,
       "fechaEstimada": null,
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-041",
+      "folio": "REQ-0041",
       "fechaSolicitud": "2026-09-14",
       "solicitante": "Prueba ilse",
       "correo": "i.cameros@gebienestar.com.mx",
@@ -774,13 +734,12 @@
       "prioridad": "Normal",
       "comentarios": "Lo necesito en  blanco de preferencia",
       "estatus": "Pendiente",
-      "estatusSinDefinir": true,
       "fechaEstimada": "2026-09-25",
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-042",
+      "folio": "REQ-0042",
       "fechaSolicitud": "2026-09-14",
       "solicitante": "Sarahi",
       "correo": "aux.compras@gebienestar.com.mx",
@@ -793,13 +752,12 @@
       "prioridad": "Normal",
       "comentarios": "",
       "estatus": "Pendiente",
-      "estatusSinDefinir": true,
       "fechaEstimada": "2026-09-18",
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-043",
+      "folio": "REQ-0043",
       "fechaSolicitud": "2026-09-14",
       "solicitante": "Alex",
       "correo": "j.caram@vivo47.com",
@@ -812,13 +770,12 @@
       "prioridad": "Urgente",
       "comentarios": "",
       "estatus": "Pendiente",
-      "estatusSinDefinir": true,
       "fechaEstimada": "2026-09-15",
       "fechaRecibido": null,
       "notas": ""
     },
     {
-      "folio": "REQ-044",
+      "folio": "REQ-0044",
       "fechaSolicitud": "2026-09-14",
       "solicitante": "David Alejandro Sanchez Alamos",
       "correo": "davidalejandrosanchezalamos@gmail.com",
@@ -831,14 +788,13 @@
       "prioridad": "Urgente",
       "comentarios": "Si se necesitan urgente",
       "estatus": "Pendiente",
-      "estatusSinDefinir": true,
       "fechaEstimada": "2026-09-16",
       "fechaRecibido": null,
       "notas": ""
     }
   ],
   "sourceRowCount": 44,
-  "updatedAt": "2026-09-15T21:47:11.798Z",
+  "updatedAt": "2026-09-15T22:30:26.760Z",
   "catalog": {
     "sucursalesPorUnidad": {
       "EasyFit": [

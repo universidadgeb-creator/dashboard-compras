@@ -232,6 +232,8 @@
   .mail-btn:hover{ background:rgba(31,78,140,0.16); border-color:var(--border); }
   .mail-btn svg{ width:13px; height:13px; }
 
+  .inferred{ border-bottom:1px dotted var(--ink-muted); cursor:help; }
+
   .comment-cell{
     max-width:220px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     color:var(--ink-2); font-size:12.5px;
@@ -392,7 +394,8 @@
     <strong>Sobre estos datos:</strong> vienen de “Control de pedidos 2026 whatsapp” y se vuelven a leer automáticamente
     cada 30 minutos (ver <code>.github/workflows/deploy.yml</code>). Solo las solicitudes más recientes traen
     <em>Unidad de negocio</em> y <em>fecha estimada</em> de origen — el resto se completó infiriendo la unidad a partir de
-    la sucursal original, por lo que puede no ser exacto. Las columnas <strong>Recepción real</strong> y
+    la sucursal original (marcadas con <strong>*</strong> y subrayado punteado en la columna Unidad), por lo que puede no
+    ser exacto. Las columnas <strong>Recepción real</strong> y
     <strong>Notas de seguimiento</strong> se leen directo de la hoja (agrega ahí una columna “Fecha de recepción real” y
     otra “Notas de seguimiento” para que el equipo de compras cierre el ciclo desde donde ya trabaja). El ícono de correo
     junto al solicitante abre un mensaje de seguimiento ya redactado, listo para revisar y enviar.
@@ -415,6 +418,15 @@
   const STATUS_COLOR = { 'En proceso':'var(--pipe-1)', 'Comprando / Recibido':'var(--pipe-2)', 'Entregado':'var(--pipe-3)' };
   const PRIO_ORDER = ['Normal','Media','Urgente'];
   const PRIO_COLOR = { 'Normal':'var(--prio-normal)', 'Media':'var(--prio-media)', 'Urgente':'var(--prio-urgente)' };
+  const FALLBACK_COLOR = 'var(--ink-muted)';
+
+  // Extends a known, ordered list with any other real values found in the
+  // data (a new/typo'd Estatus or Prioridad from the form) so they stay
+  // visible and filterable instead of silently vanishing.
+  function withExtras(order, rows, key){
+    const extra = uniques(key, rows).filter(v => !order.includes(v));
+    return [...order, ...extra];
+  }
 
   function normalizeEstatus(raw){
     if(raw === 'Pendiente' || raw === 'En proceso / Cotizando' || !raw) return 'En proceso';
@@ -434,7 +446,7 @@
     let risk, riskLabel, cicloDias = null;
 
     if(!abierta){
-      if(recD){
+      if(recD && solD){
         cicloDias = diffDays(recD, solD);
         if(estD){
           const onTime = recD <= estD;
@@ -444,6 +456,9 @@
           risk = 'unknown';
           riskLabel = `Entregado · ${cicloDias} d (sin fecha estimada para comparar)`;
         }
+      } else if(recD){
+        risk = 'unknown';
+        riskLabel = 'Entregado (sin fecha de solicitud válida para medir el ciclo)';
       } else {
         risk = 'unknown';
         riskLabel = 'Entregado (sin fecha de recepción registrada)';
@@ -499,8 +514,8 @@
     fillSelect('f-unidad', uniques('unidad'), state.unidad);
     fillSelect('f-sucursal', sucursalOptions(state.unidad), state.sucursal);
     fillSelect('f-depto', uniques('departamento', rowsForUnidad), state.departamento);
-    fillSelect('f-prioridad', PRIO_ORDER.filter(p=>uniques('prioridad').includes(p)), state.prioridad);
-    fillSelect('f-estatus', STATUS_ORDER.filter(s=>uniques('estatus').includes(s)), state.estatus);
+    fillSelect('f-prioridad', withExtras(PRIO_ORDER, DATA, 'prioridad').filter(p=>uniques('prioridad').includes(p)), state.prioridad);
+    fillSelect('f-estatus', withExtras(STATUS_ORDER, DATA, 'estatus').filter(s=>uniques('estatus').includes(s)), state.estatus);
   }
 
   function filtered(){
@@ -565,7 +580,7 @@
     el.innerHTML = counts.map(c=>`
       <div class="bar-item" data-k="${c.k}">
         <div class="name">${c.k}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:${(c.n/max*100).toFixed(1)}%; background:${colorMap[c.k]}"></div></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(c.n/max*100).toFixed(1)}%; background:${colorMap[c.k] || FALLBACK_COLOR}"></div></div>
         <div class="val">${c.n}</div>
       </div>`).join('');
   }
@@ -614,7 +629,7 @@
     if(d.risk==='crit') return `<span class="chip crit"><span class="mark"></span>${d.riskLabel}</span>`;
     return `<span class="chip neutral"><span class="mark"></span>${d.riskLabel}</span>`;
   }
-  function prioBadge(p){ return `<span class="prio"><i style="background:${PRIO_COLOR[p]}"></i>${p}</span>`; }
+  function prioBadge(p){ return `<span class="prio"><i style="background:${PRIO_COLOR[p] || FALLBACK_COLOR}"></i>${p}</span>`; }
 
   /* ================= table ================= */
   function renderTable(rows){
@@ -639,7 +654,7 @@
         <td class="folio">${d.folio}</td>
         <td><div class="who">${d.solicitante}${mailBtn(d)}</div></td>
         <td class="item-cell"><div class="art">${d.articulo}</div><div class="qty">Cant. ${d.cantidad}</div></td>
-        <td>${d.unidad}</td>
+        <td>${d.unidadInferida ? `<span class="inferred" title="Unidad inferida a partir de la sucursal original de la hoja; no viene explícita en esa fila">${d.unidad}*</span>` : d.unidad}</td>
         <td>${d.sucursal}</td>
         <td>${d.departamento}</td>
         <td>${prioBadge(d.prioridad)}</td>
@@ -669,8 +684,8 @@
     const rows = filtered();
     renderKPIs(rows);
     renderDimChart(rows);
-    renderOrdinalBars('status-chart', STATUS_ORDER, STATUS_COLOR, rows, 'estatus');
-    renderOrdinalBars('priority-chart', PRIO_ORDER, PRIO_COLOR, rows, 'prioridad');
+    renderOrdinalBars('status-chart', withExtras(STATUS_ORDER, rows, 'estatus'), STATUS_COLOR, rows, 'estatus');
+    renderOrdinalBars('priority-chart', withExtras(PRIO_ORDER, rows, 'prioridad'), PRIO_COLOR, rows, 'prioridad');
     renderTable(rows);
   }
 
@@ -721,8 +736,8 @@
       const res = await fetch('./data.json', { cache: 'no-store' });
       if(!res.ok) throw new Error('HTTP ' + res.status);
       const body = await res.json();
-      const rows = Array.isArray(body.rows) ? body.rows : [];
-      DATA = rows.map(computeRisk);
+      if(!Array.isArray(body.rows)) throw new Error('data.json tiene un formato inesperado (falta "rows")');
+      DATA = body.rows.map(computeRisk);
       if(body.catalog) CATALOG = body.catalog;
     } catch(err){
       setBadge('No se pudo cargar data.json');
