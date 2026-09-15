@@ -234,6 +234,19 @@
 
   .inferred{ border-bottom:1px dotted var(--ink-muted); cursor:help; }
 
+  .edit-field{
+    font:inherit; font-size:12.5px;
+    background:var(--surface-raised); color:var(--ink);
+    border:1px solid var(--border); border-radius:6px;
+    padding:5px 6px;
+  }
+  select.edit-field{ min-width:100px; }
+  input.edit-field{ width:170px; }
+  .edit-field.is-saving{ opacity:0.55; }
+  .edit-field.is-error{ border-color:var(--crit); }
+  .prio-edit{ display:inline-flex; align-items:center; gap:6px; }
+  .prio-dot{ width:8px; height:8px; border-radius:2px; flex:none; }
+
   .comment-cell{
     max-width:220px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     color:var(--ink-2); font-size:12.5px;
@@ -395,10 +408,11 @@
     cada 30 minutos (ver <code>.github/workflows/deploy.yml</code>). Solo las solicitudes más recientes traen
     <em>Unidad de negocio</em> y <em>fecha estimada</em> de origen — el resto se completó infiriendo la unidad a partir de
     la sucursal original (marcadas con <strong>*</strong> y subrayado punteado en la columna Unidad), por lo que puede no
-    ser exacto. Las columnas <strong>Recepción real</strong> y
-    <strong>Notas de seguimiento</strong> se leen directo de la hoja (agrega ahí una columna “Fecha de recepción real” y
-    otra “Notas de seguimiento” para que el equipo de compras cierre el ciclo desde donde ya trabaja). El ícono de correo
-    junto al solicitante abre un mensaje de seguimiento ya redactado, listo para revisar y enviar.
+    ser exacto. <strong>Estatus</strong>, <strong>Prioridad</strong> y <strong>Notas de seguimiento</strong> se pueden
+    editar directo aquí — el primer cambio de tu sesión pide la clave del equipo de compras y el resto se guarda solo,
+    directo en la hoja de Google. La columna <strong>Recepción real</strong> se sigue llenando desde la hoja (columna
+    “Fecha de recepción real”). El ícono de correo junto al solicitante abre un mensaje de seguimiento ya redactado
+    (incluye la nota más reciente), listo para revisar y enviar.
   </footer>
 
 </div>
@@ -648,6 +662,9 @@
       body.innerHTML = `<tr class="empty-row"><td colspan="15">Ninguna solicitud coincide con estos filtros.</td></tr>`;
       return;
     }
+    // Computed once per render (not per row) — same option list for every select.
+    const prioOpts = withExtras(PRIO_ORDER, DATA, 'prioridad');
+    const statusOpts = withExtras(STATUS_ORDER, DATA, 'estatus');
     body.innerHTML = sorted.map(d=>`
       <tr>
         <td>${riskChip(d)}</td>
@@ -657,21 +674,36 @@
         <td>${d.unidadInferida ? `<span class="inferred" title="Unidad inferida a partir de la sucursal original de la hoja; no viene explícita en esa fila">${d.unidad}*</span>` : d.unidad}</td>
         <td>${d.sucursal}</td>
         <td>${d.departamento}</td>
-        <td>${prioBadge(d.prioridad)}</td>
-        <td>${d.estatus}</td>
+        <td>${prioSelect(d, prioOpts)}</td>
+        <td>${estatusSelect(d, statusOpts)}</td>
         <td class="mono">${fmtD(d.fechaSolicitud)}</td>
         <td class="mono">${fmtD(d.fechaEstimada)}</td>
         <td class="num mono">${d.cicloDias==null?'—':d.cicloDias}</td>
         <td class="comment-cell" title="${escapeAttr(d.comentarios)}">${d.comentarios ? escapeAttr(d.comentarios) : '—'}</td>
         <td class="mono">${fmtD(d.fechaRecibido)}</td>
-        <td>${d.notas ? escapeAttr(d.notas) : '<span style="color:var(--ink-muted)">—</span>'}</td>
+        <td>
+          <input type="text" class="note-input edit-field" data-folio="${escapeAttr(d.folio)}" data-sheetrow="${d.sheetRow}"
+                 data-field="notas" value="${escapeAttr(d.notas||'')}" placeholder="Agregar nota…">
+        </td>
       </tr>`).join('');
+  }
+
+  function prioSelect(d, opts){
+    const options = opts.map(p=>`<option value="${escapeAttr(p)}" ${p===d.prioridad?'selected':''}>${escapeAttr(p)}</option>`).join('');
+    return `<span class="prio-edit"><i class="prio-dot" style="background:${PRIO_COLOR[d.prioridad] || FALLBACK_COLOR}"></i>
+      <select class="edit-field" data-folio="${escapeAttr(d.folio)}" data-sheetrow="${d.sheetRow}" data-field="prioridad">${options}</select></span>`;
+  }
+
+  function estatusSelect(d, opts){
+    const options = opts.map(s=>`<option value="${escapeAttr(s)}" ${s===d.estatus?'selected':''}>${escapeAttr(s)}</option>`).join('');
+    return `<select class="edit-field" data-folio="${escapeAttr(d.folio)}" data-sheetrow="${d.sheetRow}" data-field="estatus">${options}</select>`;
   }
 
   function mailBtn(d){
     if(!d.correo) return '';
     const subject = encodeURIComponent(`Seguimiento ${d.folio} — ${d.articulo}`);
-    const body = encodeURIComponent(`Hola ${d.solicitante},\n\nTe escribo para darle seguimiento a tu solicitud ${d.folio} (${d.articulo}).\n\nEstatus actual: ${d.estatus}.\n\nSaludos.`);
+    const notaLine = d.notas ? `\n\nNota de seguimiento: ${d.notas}` : '';
+    const body = encodeURIComponent(`Hola ${d.solicitante},\n\nTe escribo para darle seguimiento a tu solicitud ${d.folio} (${d.articulo}).\n\nEstatus actual: ${d.estatus}.${notaLine}\n\nSaludos.`);
     return `<a class="mail-btn" href="mailto:${escapeAttr(d.correo)}?subject=${subject}&body=${body}" title="Enviar correo de seguimiento a ${escapeAttr(d.correo)}">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z" opacity="0"/><path d="M3 6l9 7 9-7"/><path d="M21 6v12H3V6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1Z"/></svg>
     </a>`;
@@ -715,6 +747,65 @@
     btn.classList.add('active');
     state.dim = btn.dataset.dim;
     renderDimChart(filtered());
+  });
+
+  /* ================= edit: save Estatus / Prioridad / Notas back to the sheet =================
+     Requires apps-script/Code.gs to be deployed (see that file's header for
+     the one-time setup) and APPS_SCRIPT_URL below filled in. Until then this
+     stays a silent no-op and the fields are effectively read-only (any edit
+     shows an error instead of being lost silently). */
+  const APPS_SCRIPT_URL = '';
+  const PIN_KEY = 'dashboardCompras.editPin';
+
+  function getPin(promptIfMissing){
+    let pin = sessionStorage.getItem(PIN_KEY);
+    if(!pin && promptIfMissing){
+      pin = window.prompt('Clave para guardar cambios en la hoja:') || '';
+      if(pin) sessionStorage.setItem(PIN_KEY, pin);
+    }
+    return pin;
+  }
+
+  async function saveField(el){
+    const { folio, sheetrow, field } = el.dataset;
+    const value = el.value;
+    if(!APPS_SCRIPT_URL){
+      el.classList.add('is-error');
+      el.title = 'Falta configurar el guardado hacia la hoja (APPS_SCRIPT_URL).';
+      return;
+    }
+    const pin = getPin(true);
+    if(!pin) return; // user cancelled the PIN prompt — leave the field as edited locally
+
+    el.classList.remove('is-error');
+    el.classList.add('is-saving');
+    try{
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ pin, folio, sheetRow: Number(sheetrow), [field]: value }),
+      });
+      const out = await res.json();
+      if(!out.ok){
+        if(/pin incorrecto/i.test(out.error||'')) sessionStorage.removeItem(PIN_KEY);
+        throw new Error(out.error || 'Error desconocido');
+      }
+      // Optimistic local update so the KPIs/charts/filters reflect the change
+      // immediately, without waiting for the next 30-minute data.json refresh.
+      const idx = DATA.findIndex(d=>d.folio===folio);
+      if(idx>=0){ DATA[idx] = computeRisk(Object.assign({}, DATA[idx], { [field]: value })); }
+      el.classList.remove('is-saving');
+      renderAll();
+    } catch(err){
+      el.classList.remove('is-saving');
+      el.classList.add('is-error');
+      el.title = 'No se pudo guardar: ' + err.message;
+      setBadge('No se pudo guardar el cambio: ' + err.message);
+    }
+  }
+
+  document.getElementById('table-body').addEventListener('change', e=>{
+    const el = e.target.closest('.edit-field');
+    if(el) saveField(el);
   });
   document.querySelectorAll('th [data-sort]').forEach(btn=>{
     btn.addEventListener('click', ()=>{

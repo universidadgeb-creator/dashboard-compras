@@ -134,6 +134,10 @@ async function main() {
 
     return {
       folio: 'REQ-' + String(r.sheetRow).padStart(4, '0'),
+      // The row's 1-based position among data rows (header excluded) — lets
+      // the dashboard tell the Apps Script write-back endpoint exactly which
+      // sheet row to edit.
+      sheetRow: r.sheetRow,
       fechaSolicitud: parseDT(r['Marca temporal']),
       solicitante: r['Escribe tu nombre'] || 'Sin nombre',
       correo: r['Escribe tu correo electrónico'] || '',
