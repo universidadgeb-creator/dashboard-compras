@@ -59,11 +59,25 @@ function parseCSV(text) {
 function parseDT(s) {
   if (!s) return null;
   const [datePart] = s.split(' ');
-  const [d, m, y] = datePart.split('/').map(Number);
+  let d, m, y;
+  if (datePart.includes('-')) {
+    // Already ISO (e.g. written back by the dashboard's date picker via Apps Script).
+    [y, m, d] = datePart.split('-').map(Number);
+  } else {
+    // The Form's own timestamp format, D/M/YYYY.
+    [d, m, y] = datePart.split('/').map(Number);
+  }
   if (!d || !m || !y) return null;
   if (d < 1 || d > 31 || m < 1 || m > 12 || y < 2000 || y > 2100) return null;
   const pad = (n) => String(n).padStart(2, '0');
   return `${y}-${pad(m)}-${pad(d)}`;
+}
+
+// Prefer an actual http(s) link; the form sometimes gets the product link
+// pasted into the wrong field ("Anexa foto..." instead of "Enlace de
+// referencia"), so fall back to whichever column actually holds one.
+function pickLink(...candidates) {
+  return candidates.find((v) => /^https?:\/\//i.test(v || '')) || '';
 }
 
 const UNIDAD_INFER = {
@@ -149,8 +163,9 @@ async function main() {
       sucursal: sucursal || 'Sin especificar',
       departamento: departamento || 'Sin especificar',
       articulo: r['Nombre del articulo'] || '(sin descripción)',
+      enlace: pickLink(r['Enlace de referencia (URL O LINK)'], r['Anexa foto de lo que necesitas']),
       cantidad: isNaN(cantidadNum) ? 1 : cantidadNum,
-      prioridad: r['Prioridad'] || 'Normal',
+      prioridad: r['Prioridad'] || 'Baja',
       comentarios: r['Comentarios'] || '',
       estatus,
       fechaEstimada: parseDT(r['Fecha estimada de entrega']),

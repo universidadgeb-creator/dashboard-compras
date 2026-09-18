@@ -1,10 +1,11 @@
 /**
  * Write-back endpoint for the Dashboard Compras static site.
  *
- * Lets the public dashboard update Estatus, Prioridad and "Notas de
- * seguimiento" for one existing row of the "Control de pedidos 2026
- * whatsapp" sheet, gated by a shared PIN kept in Script Properties
- * (never in this source or in the dashboard's client-side code).
+ * Lets the public dashboard update Estatus, Prioridad, "Notas de
+ * seguimiento" and "Fecha de recepción real" for one existing row of the
+ * "Control de pedidos 2026 whatsapp" sheet, gated by a shared PIN kept in
+ * Script Properties (never in this source or in the dashboard's
+ * client-side code).
  *
  * SETUP (one time, done by a human in the Google account that owns the sheet):
  *   1. Open the sheet -> Extensions -> Apps Script.
@@ -64,14 +65,25 @@ function doPost(e) {
       return jsonOut({ ok: false, error: 'La fila ya no corresponde a esa solicitud (¿se movió o se borró?) — recarga la página e intenta de nuevo' });
     }
 
-    const fieldToColumn = { estatus: 'Estatus', prioridad: 'Prioridad', notas: 'Notas de seguimiento' };
+    const fieldToColumn = {
+      estatus: 'Estatus',
+      prioridad: 'Prioridad',
+      notas: 'Notas de seguimiento',
+      fechaRecibido: 'Fecha de recepción real',
+    };
     const missingColumns = [];
     let wrote = 0;
     Object.keys(fieldToColumn).forEach((field) => {
       if (typeof body[field] !== 'string') return;
       const col = colFor(fieldToColumn[field]);
       if (col == null) { missingColumns.push(fieldToColumn[field]); return; }
-      sheet.getRange(row, col).setValue(body[field]);
+      const cell = sheet.getRange(row, col);
+      if (field === 'fechaRecibido') {
+        // Force plain text ("YYYY-MM-DD", from the dashboard's <input type="date">)
+        // so Sheets doesn't reinterpret it as a locale-formatted date on export.
+        cell.setNumberFormat('@STRING@');
+      }
+      cell.setValue(body[field]);
       wrote++;
     });
 
@@ -79,6 +91,14 @@ function doPost(e) {
       return jsonOut({ ok: false, error: 'Columnas no encontradas en la hoja: ' + missingColumns.join(', ') });
     }
     if (!wrote) return jsonOut({ ok: false, error: 'No se envió ningún campo para actualizar' });
+
+    // A receipt date closes the cycle even if the dashboard didn't also send
+    // an explicit Estatus change in this same request — keep the sheet's own
+    // Estatus cell consistent with that rule, not just data.json's read side.
+    if (typeof body.fechaRecibido === 'string' && body.fechaRecibido && typeof body.estatus !== 'string') {
+      const estCol = colFor('Estatus');
+      if (estCol != null) sheet.getRange(row, estCol).setValue('Entregado');
+    }
 
     return jsonOut({ ok: true });
   } catch (err) {

@@ -232,6 +232,16 @@
   .mail-btn:hover{ background:rgba(31,78,140,0.16); border-color:var(--border); }
   .mail-btn svg{ width:13px; height:13px; }
 
+  .ref-link{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:18px; height:18px; border-radius:5px; flex:none;
+    color:var(--accent); background:rgba(31,78,140,0.08);
+    border:1px solid transparent; text-decoration:none;
+    margin-left:6px; vertical-align:middle;
+  }
+  .ref-link:hover{ background:rgba(31,78,140,0.16); border-color:var(--border); }
+  .ref-link svg{ width:11px; height:11px; }
+
   .inferred{ border-bottom:1px dotted var(--ink-muted); cursor:help; }
 
   .edit-field{
@@ -408,11 +418,13 @@
     cada 30 minutos (ver <code>.github/workflows/deploy.yml</code>). Solo las solicitudes más recientes traen
     <em>Unidad de negocio</em> y <em>fecha estimada</em> de origen — el resto se completó infiriendo la unidad a partir de
     la sucursal original (marcadas con <strong>*</strong> y subrayado punteado en la columna Unidad), por lo que puede no
-    ser exacto. <strong>Estatus</strong>, <strong>Prioridad</strong> y <strong>Notas de seguimiento</strong> se pueden
-    editar directo aquí — el primer cambio de tu sesión pide la clave del equipo de compras y el resto se guarda solo,
-    directo en la hoja de Google. La columna <strong>Recepción real</strong> se sigue llenando desde la hoja (columna
-    “Fecha de recepción real”). El ícono de correo junto al solicitante abre un mensaje de seguimiento ya redactado
-    (incluye la nota más reciente), listo para revisar y enviar.
+    ser exacto. <strong>Estatus</strong>, <strong>Prioridad</strong>, <strong>Notas de seguimiento</strong> y
+    <strong>Recepción real</strong> se pueden editar directo aquí — el primer cambio de tu sesión pide la clave del
+    equipo de compras y el resto se guarda solo, directo en la hoja de Google. Al capturar la fecha de recepción, la
+    solicitud se cierra como Entregada y el "Ciclo (d)" de esa fila ya muestra en cuántos días se entregó. El ícono
+    de enlace junto al artículo abre el link de referencia que mandaron en la solicitud (Mercado Libre, Amazon, etc.),
+    cuando viene uno. El ícono de correo junto al solicitante abre un mensaje de seguimiento con el estatus, la
+    prioridad y la nota más reciente ya escritos, listo para revisar y enviar.
   </footer>
 
 </div>
@@ -430,9 +442,17 @@
 
   const STATUS_ORDER = ['En proceso','Comprando / Recibido','Entregado'];
   const STATUS_COLOR = { 'En proceso':'var(--pipe-1)', 'Comprando / Recibido':'var(--pipe-2)', 'Entregado':'var(--pipe-3)' };
-  const PRIO_ORDER = ['Normal','Media','Urgente'];
-  const PRIO_COLOR = { 'Normal':'var(--prio-normal)', 'Media':'var(--prio-media)', 'Urgente':'var(--prio-urgente)' };
+  const PRIO_ORDER = ['Baja','Media','Urgente'];
+  const PRIO_COLOR = { 'Baja':'var(--prio-normal)', 'Media':'var(--prio-media)', 'Urgente':'var(--prio-urgente)' };
   const FALLBACK_COLOR = 'var(--ink-muted)';
+
+  // The form used to offer "Normal" instead of "Baja" — fold old rows into
+  // the current three-tier scale (Baja/Media/Urgente) instead of showing a
+  // fourth, orphaned option.
+  function normalizePrioridad(raw){
+    if(raw === 'Normal' || !raw) return 'Baja';
+    return raw;
+  }
 
   // Extends a known, ordered list with any other real values found in the
   // data (a new/typo'd Estatus or Prioridad from the form) so they stay
@@ -452,7 +472,7 @@
   function fmtD(s){ if(!s) return '—'; const d=parseD(s); return d.toLocaleDateString('es-MX',{day:'2-digit',month:'short'}); }
 
   function computeRisk(raw){
-    const r = Object.assign({}, raw, { estatus: normalizeEstatus(raw.estatus) });
+    const r = Object.assign({}, raw, { estatus: normalizeEstatus(raw.estatus), prioridad: normalizePrioridad(raw.prioridad) });
     const solD = parseD(r.fechaSolicitud);
     const estD = parseD(r.fechaEstimada);
     const recD = parseD(r.fechaRecibido);
@@ -670,7 +690,7 @@
         <td>${riskChip(d)}</td>
         <td class="folio">${d.folio}</td>
         <td><div class="who">${d.solicitante}${mailBtn(d)}</div></td>
-        <td class="item-cell"><div class="art">${d.articulo}</div><div class="qty">Cant. ${d.cantidad}</div></td>
+        <td class="item-cell"><div class="art">${d.articulo}${linkBtn(d)}</div><div class="qty">Cant. ${d.cantidad}</div></td>
         <td>${d.unidadInferida ? `<span class="inferred" title="Unidad inferida a partir de la sucursal original de la hoja; no viene explícita en esa fila">${d.unidad}*</span>` : d.unidad}</td>
         <td>${d.sucursal}</td>
         <td>${d.departamento}</td>
@@ -680,7 +700,10 @@
         <td class="mono">${fmtD(d.fechaEstimada)}</td>
         <td class="num mono">${d.cicloDias==null?'—':d.cicloDias}</td>
         <td class="comment-cell" title="${escapeAttr(d.comentarios)}">${d.comentarios ? escapeAttr(d.comentarios) : '—'}</td>
-        <td class="mono">${fmtD(d.fechaRecibido)}</td>
+        <td>
+          <input type="date" class="edit-field" data-folio="${escapeAttr(d.folio)}" data-sheetrow="${d.sheetRow}"
+                 data-field="fechaRecibido" value="${d.fechaRecibido||''}" title="Fecha en que se recibió — cierra la solicitud como Entregada">
+        </td>
         <td>
           <input type="text" class="note-input edit-field" data-folio="${escapeAttr(d.folio)}" data-sheetrow="${d.sheetRow}"
                  data-field="notas" value="${escapeAttr(d.notas||'')}" placeholder="Agregar nota…">
@@ -699,11 +722,18 @@
     return `<select class="edit-field" data-folio="${escapeAttr(d.folio)}" data-sheetrow="${d.sheetRow}" data-field="estatus">${options}</select>`;
   }
 
+  function linkBtn(d){
+    if(!d.enlace) return '';
+    return `<a class="ref-link" href="${escapeAttr(d.enlace)}" target="_blank" rel="noopener noreferrer" title="Abrir el link de referencia que mandaron en la solicitud">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07l1.5-1.5"/></svg>
+    </a>`;
+  }
+
   function mailBtn(d){
     if(!d.correo) return '';
     const subject = encodeURIComponent(`Seguimiento ${d.folio} — ${d.articulo}`);
-    const notaLine = d.notas ? `\n\nNota de seguimiento: ${d.notas}` : '';
-    const body = encodeURIComponent(`Hola ${d.solicitante},\n\nTe escribo para darle seguimiento a tu solicitud ${d.folio} (${d.articulo}).\n\nEstatus actual: ${d.estatus}.${notaLine}\n\nSaludos.`);
+    const notaLine = d.notas ? `\nNota de seguimiento: ${d.notas}` : '';
+    const body = encodeURIComponent(`Hola ${d.solicitante},\n\nTe escribo para darle seguimiento a tu solicitud ${d.folio} (${d.articulo}).\n\nEstatus actual: ${d.estatus}\nPrioridad: ${d.prioridad}${notaLine}\n\nSaludos.`);
     return `<a class="mail-btn" href="mailto:${escapeAttr(d.correo)}?subject=${subject}&body=${body}" title="Enviar correo de seguimiento a ${escapeAttr(d.correo)}">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z" opacity="0"/><path d="M3 6l9 7 9-7"/><path d="M21 6v12H3V6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1Z"/></svg>
     </a>`;
@@ -791,8 +821,12 @@
       }
       // Optimistic local update so the KPIs/charts/filters reflect the change
       // immediately, without waiting for the next 30-minute data.json refresh.
+      // Setting a receipt date closes the request, same rule Code.gs applies
+      // to the sheet itself and generate-data.js applies when re-reading it.
+      const patch = { [field]: value };
+      if(field==='fechaRecibido' && value) patch.estatus = 'Entregado';
       const idx = DATA.findIndex(d=>d.folio===folio);
-      if(idx>=0){ DATA[idx] = computeRisk(Object.assign({}, DATA[idx], { [field]: value })); }
+      if(idx>=0){ DATA[idx] = computeRisk(Object.assign({}, DATA[idx], patch)); }
       el.classList.remove('is-saving');
       renderAll();
     } catch(err){
